@@ -1,5 +1,22 @@
+# uf2-nrf5
 
-# Contributing
+UF2 bootloader for nRF52840
+
+## Build instructions
+
+Download [nRF5 SDK v14.2.0](https://developer.nordicsemi.com/nRF5_SDK/nRF5_SDK_v14.x.x/nRF5_SDK_14.2.0_17b948a.zip)
+
+Rename `nRF5_SDK_14.2.0_17b948a` to `nRF5_SDK`. You should have `nRF5_SDK/components` in this directory.
+
+Run `make`
+
+## License
+
+The files dervied from NRF SDK are distributed under their respective license (see comments in source files).
+
+New files are distributed under the MIT license.
+
+## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
