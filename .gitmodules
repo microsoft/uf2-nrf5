@@ -1,0 +1,3 @@
+[submodule "codal-core"]
+	path = codal-core
+	url = https://github.com/lancaster-university/codal-core
