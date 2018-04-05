@@ -56,7 +56,7 @@
 
 
 #ifndef NRF_DFU_INACTIVITY_TIMEOUT_MS
-#define NRF_DFU_INACTIVITY_TIMEOUT_MS 120000
+#define NRF_DFU_INACTIVITY_TIMEOUT_MS 60000000
 #endif
 
 // <o> NRF_DFU_POST_SD_BL_TIMEOUT_MS - Timeout in ms before automatically starting a valid application after a bootloader or SoftDevice update  <100-60000000> 
@@ -2410,7 +2410,7 @@
 // <4=> Debug 
 
 #ifndef APP_USBD_MSC_CONFIG_LOG_LEVEL
-#define APP_USBD_MSC_CONFIG_LOG_LEVEL 3
+#define APP_USBD_MSC_CONFIG_LOG_LEVEL 4
 #endif
 
 // <o> APP_USBD_MSC_CONFIG_INFO_COLOR  - ANSI escape code prefix.
@@ -2980,7 +2980,7 @@
 // <i> or this value is actually used. It depends on which one is bigger.
 
 #ifndef SEGGER_RTT_CONFIG_BUFFER_SIZE_UP
-#define SEGGER_RTT_CONFIG_BUFFER_SIZE_UP 4096
+#define SEGGER_RTT_CONFIG_BUFFER_SIZE_UP 8192
 #endif
 
 // <o> SEGGER_RTT_CONFIG_MAX_NUM_UP_BUFFERS - Size of upstream buffer. 
