@@ -8,9 +8,24 @@ PROJ_DIR := src
 $(OUTPUT_DIRECTORY)/nrf52840_xxaa_debug.out: \
   LINKER_SCRIPT  := secure_dfu_usb_gcc_nrf52.ld
 
+CODAL_SRC = \
+  codal-core/source/core/CodalCompat.cpp \
+  codal-core/source/driver-models/CodalUSB.cpp \
+  codal-core/source/drivers/USBMSC.cpp \
+  codal-core/source/drivers/GhostFAT.cpp \
+
+CODAL_INC = \
+  codal-core/inc/driver-models \
+  codal-core/inc/core \
+  codal-core/inc/drivers \
+  codal-core/inc/types \
+
+CODAL_DEFS = 
 
 # Source files common to all targets
 SRC_FILES += \
+  $(CODAL_SRC) \
+  $(PROJ_DIR)/flashfat.cpp \
   $(PROJ_DIR)/nrf_usb_uf2.c \
   $(PROJ_DIR)/nrf_dfu.c \
   $(PROJ_DIR)/nrf_block_dev_uf2.c \
@@ -127,6 +142,7 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/libraries/experimental_memobj \
   $(SDK_ROOT)/components/drivers_nrf/usbd \
   $(SDK_ROOT)/components/toolchain/gcc \
+  $(CODAL_INC)
 
 # Libraries common to all targets
 LIB_FILES += 
@@ -151,6 +167,7 @@ CFLAGS += -DSVC_INTERFACE_CALL_AS_NORMAL_FUNCTION
 CFLAGS += -DSWI_DISABLE0
 CFLAGS += -D__HEAP_SIZE=0
 CFLAGS += -DAPP_USBD_MSC_ENABLED=1
+CFLAGS += $(CODAL_DEFS)
 CFLAGS += -mcpu=cortex-m4
 CFLAGS += -mthumb -mabi=aapcs
 CFLAGS +=  -Wall -Werror
