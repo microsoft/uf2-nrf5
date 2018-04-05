@@ -12,6 +12,7 @@ $(OUTPUT_DIRECTORY)/nrf52840_xxaa_debug.out: \
 # Source files common to all targets
 SRC_FILES += \
   $(PROJ_DIR)/nrf_usb_uf2.c \
+  $(PROJ_DIR)/nrf_dfu.c \
   $(PROJ_DIR)/nrf_block_dev_uf2.c \
   $(PROJ_DIR)/ghostfat.c \
   $(PROJ_DIR)/main.c \
@@ -62,7 +63,6 @@ SRC_FILES += \
   $(SDK_ROOT)/components/libraries/bootloader/nrf_bootloader_app_start.c \
   $(SDK_ROOT)/components/libraries/bootloader/nrf_bootloader_app_start_asm.c \
   $(SDK_ROOT)/components/libraries/bootloader/nrf_bootloader_info.c \
-  $(SDK_ROOT)/components/libraries/bootloader/dfu/nrf_dfu.c \
   $(SDK_ROOT)/components/libraries/bootloader/dfu/nrf_dfu_flash.c \
   $(SDK_ROOT)/components/libraries/bootloader/dfu/nrf_dfu_handling_error.c \
   $(SDK_ROOT)/components/libraries/bootloader/dfu/nrf_dfu_mbr.c \
@@ -230,3 +230,15 @@ SDK_CONFIG_FILE := ../config/sdk_config.h
 CMSIS_CONFIG_TOOL := $(SDK_ROOT)/external_tools/cmsisconfig/CMSIS_Configuration_Wizard.jar
 sdk_config:
 	java -jar $(CMSIS_CONFIG_TOOL) $(SDK_CONFIG_FILE)
+
+A15 = $(HOME)/Library/Arduino15
+OPENOCD = $(A15)/packages/arduino/tools/openocd/0.10.0-arduino1-static
+
+o: openocd
+g: gdb
+
+openocd:
+	$(OPENOCD)/bin/openocd -d2 -s $(OPENOCD)/share/openocd/scripts/ -c 'source [find interface/jlink.cfg]; transport select swd; source [find target/nrf52.cfg]; init; halt; '
+
+gdb:
+	$(A15)/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/bin/arm-none-eabi-gdb --command=openocd.gdb _build/nrf52840_xxaa_debug.out
