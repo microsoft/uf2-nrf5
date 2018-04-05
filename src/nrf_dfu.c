@@ -136,6 +136,8 @@ static void scheduler_init(void)
 }
 
 
+extern bool sdRunning;
+
 static void wait_for_event()
 {
     while (true)
@@ -143,11 +145,10 @@ static void wait_for_event()
         app_sched_execute();
         if (!NRF_LOG_PROCESS())
         {
-        #ifdef BLE_STACK_SUPPORT_REQD
-            (void)sd_app_evt_wait();
-        #else
-            __WFE();
-        #endif
+            if (sdRunning)
+                (void)sd_app_evt_wait();
+            else
+                __WFE();
         }
     }
 }
