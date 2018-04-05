@@ -5,9 +5,8 @@
 #define UF2_NUM_BLOCKS 8000
 #define VOLUME_LABEL "NRFBOOT"
 #define FLASH_SIZE (1024*1024)
-// TODO
-// where the UF2 files are allowed to write data - 0-0x3000 is MBR, and after 0xf1000 the bootloader starts
-#define USER_FLASH_START 0x3000
-#define USER_FLASH_END 0xf1000
+// where the UF2 files are allowed to write data - we allow MBR, since it seems part of the softdevice .hex file
+#define USER_FLASH_START 0x0
+#define USER_FLASH_END BOOTLOADER_START_ADDR
 
 #define FLASH_PAGE_SIZE 4096

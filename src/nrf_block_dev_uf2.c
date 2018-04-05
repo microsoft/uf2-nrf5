@@ -111,12 +111,7 @@ static ret_code_t block_dev_uf2_req(nrf_block_dev_t const * p_blk_dev,
     ASSERT(p_blk_dev);
     ASSERT(p_blk);
     nrf_block_dev_uf2_t const * p_ram_dev = CONTAINER_OF(p_blk_dev, nrf_block_dev_uf2_t, block_dev);
-    nrf_block_dev_uf2_config_t const * p_ram_config = &p_ram_dev->ram_config;
     nrf_block_dev_uf2_work_t const * p_work = p_ram_dev->p_work;
-
-    /*Synchronous operation*/
-    uint8_t * p_buff = (void*)&p_ram_config;
-    p_buff += p_blk->blk_id * p_work->geometry.blk_size;
 
     if (event == NRF_BLOCK_DEV_EVT_BLK_READ_DONE) {
         for (uint32_t i = 0; i < p_blk->blk_count; ++i)

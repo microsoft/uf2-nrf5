@@ -58,6 +58,7 @@
 #include "app_error.h"
 #include "app_error_weak.h"
 #include "nrf_bootloader_info.h"
+#include "nrf_delay.h"
 
 #define BOOTLOADER_BUTTON   (BSP_BUTTON_3)      /**< Button for entering DFU mode. */
 
@@ -106,6 +107,8 @@ bool nrf_dfu_button_enter_check(void)
     return false;
 }
 
+bool sdRunning;
+
 /**@brief Function for application main entry.
  */
 int main(void)
@@ -121,6 +124,8 @@ int main(void)
 
     NRF_LOG_INFO("Secure DFU USB started");
     NRF_LOG_FLUSH();
+
+    // nrf_delay_ms(3000);
 
     ret_val = nrf_bootloader_init();
     APP_ERROR_CHECK(ret_val);

@@ -1134,14 +1134,11 @@ static nrf_dfu_res_code_t nrf_dfu_data_req(void * p_context, nrf_dfu_req_t * p_r
     return ret_val;
 }
 
+extern bool sdRunning;
 
 uint32_t nrf_dfu_req_handler_init(void)
 {
-#ifdef BLE_STACK_SUPPORT_REQD
-    uint32_t ret_val = nrf_dfu_flash_init(true);
-#else
-    uint32_t ret_val = nrf_dfu_flash_init(false);
-#endif
+    uint32_t ret_val = nrf_dfu_flash_init(sdRunning);
     VERIFY_SUCCESS(ret_val);
 
     // If the command is stored to flash, init command was valid.

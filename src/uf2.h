@@ -8,6 +8,12 @@
 
 #include "app_util.h"
 
+#include "nrf_bootloader_info.h"
+
+#define SD_MAGIC_NUMBER 0x51b1e5db
+#define SD_MAGIC_OK() (*((uint32_t*)(SOFTDEVICE_INFO_STRUCT_ADDRESS+4)) == 0x51b1e5db)
+extern bool sdRunning;
+
 // All entries are little endian.
 
 #define UF2_MAGIC_START0 0x0A324655UL // "UF2\n"

@@ -1,8 +1,10 @@
 
 #include "uf2.h"
 
+#include "nrf_log.h"
 #include "nrf_nvmc.h"
-
+#include "nrf_sdh.h"
+#include "nrf_dfu_settings.h"
 
 #include <string.h>
 
@@ -114,38 +116,76 @@ static const FAT_BootBlock BootBlock = {
 #define NO_CACHE 0xffffffff
 
 uint32_t flashAddr = NO_CACHE;
-uint8_t flashBuf[FLASH_PAGE_SIZE];
+uint8_t flashBuf[FLASH_PAGE_SIZE] __attribute__((aligned(4)));
+bool firstFlush = true;
+bool hadWrite = false;
 
 void flushFlash() {
     if (flashAddr == NO_CACHE)
         return;
-    if (memcmp(flashBuf, (void*)flashAddr, FLASH_PAGE_SIZE) != 0) {
-        nrf_nvmc_page_erase(flashAddr);
-        nrf_nvmc_write_words(flashAddr, (uint32_t*)flashBuf, FLASH_PAGE_SIZE / sizeof(uint32_t));
+
+    if (firstFlush) {
+        if (sdRunning) {
+            // disable SD - we need sync access to flash, and we might be also overwriting the SD
+            nrf_sdh_disable_request();
+            nrf_dfu_settings_init(false);
+        }
+
+        firstFlush = false;
+
+        s_dfu_settings.write_offset = 0;
+        s_dfu_settings.sd_size = 0;
+        s_dfu_settings.bank_layout = NRF_DFU_BANK_LAYOUT_DUAL;
+        s_dfu_settings.bank_current = NRF_DFU_CURRENT_BANK_0;
+
+        memset(&s_dfu_settings.bank_0, 0, sizeof(s_dfu_settings.bank_0));
+        memset(&s_dfu_settings.bank_1, 0, sizeof(s_dfu_settings.bank_1));
+
+        nrf_dfu_settings_write(NULL);
     }
+
+    int32_t sz = flashAddr + FLASH_PAGE_SIZE;
+    if (s_dfu_settings.bank_0.image_size < sz)
+        s_dfu_settings.bank_0.image_size = sz;
+
+    NRF_LOG_DEBUG("Flush at %x", flashAddr);
+    if (memcmp(flashBuf, (void *)flashAddr, FLASH_PAGE_SIZE) != 0) {
+        NRF_LOG_DEBUG("Write flush at %x", flashAddr);
+        nrf_nvmc_page_erase(flashAddr);
+        nrf_nvmc_write_words(flashAddr, (uint32_t *)flashBuf, FLASH_PAGE_SIZE / sizeof(uint32_t));
+    }
+
     flashAddr = NO_CACHE;
 }
 
-void flash_write(uint32_t dst, const uint8_t *src, int len)
-{
+void flash_write(uint32_t dst, const uint8_t *src, int len) {
     uint32_t newAddr = dst & ~(FLASH_PAGE_SIZE - 1);
+
+    hadWrite = true;
+
     if (newAddr != flashAddr) {
         flushFlash();
-        newAddr = flashAddr;
-        memcpy(flashBuf, (void*)newAddr, FLASH_PAGE_SIZE);
+        flashAddr = newAddr;
+        memcpy(flashBuf, (void *)newAddr, FLASH_PAGE_SIZE);
     }
     memcpy(flashBuf + (dst & (FLASH_PAGE_SIZE - 1)), src, len);
 }
 
-void uf2_timer(void * p_context)
-{
+void uf2_timer(void *p_context) {
     UNUSED_PARAMETER(p_context);
-    flushFlash();
+    if (hadWrite) {
+        flushFlash();
+        s_dfu_settings.bank_0.bank_code = NRF_DFU_BANK_VALID_APP;
+        int32_t start = SD_MAGIC_OK() ? MAIN_APPLICATION_START_ADDR : MBR_SIZE;
+        int32_t sz = s_dfu_settings.bank_0.image_size - start;
+        if (sz > 0)
+            s_dfu_settings.bank_0.image_size = sz;
+        nrf_dfu_settings_write(NULL);
+    }
     NVIC_SystemReset();
 }
 
 void uf2_timer_start(int ms);
-
 
 void padded_memcpy(char *dst, const char *src, int len) {
     for (int i = 0; i < len; ++i) {
@@ -156,7 +196,6 @@ void padded_memcpy(char *dst, const char *src, int len) {
         dst++;
     }
 }
-
 
 void read_block(uint32_t block_no, uint8_t *data) {
     memset(data, 0, 512);
@@ -183,12 +222,11 @@ void read_block(uint32_t block_no, uint8_t *data) {
             if (UF2_FIRST_SECTOR <= v && v <= UF2_LAST_SECTOR)
                 ((uint16_t *)(void *)data)[i] = v == UF2_LAST_SECTOR ? 0xffff : v + 1;
         }
-    }
-    else if (block_no < START_CLUSTERS) {
+    } else if (block_no < START_CLUSTERS) {
         sectionIdx -= START_ROOTDIR;
         if (sectionIdx == 0) {
             DirEntry *d = (void *)data;
-            padded_memcpy(d->name, (const char*)BootBlock.VolumeLabel, 11);
+            padded_memcpy(d->name, (const char *)BootBlock.VolumeLabel, 11);
             d->attrs = 0x28;
             for (int i = 0; i < NUM_INFO; ++i) {
                 d++;
@@ -222,6 +260,9 @@ void read_block(uint32_t block_no, uint8_t *data) {
 
 void write_block(uint32_t block_no, uint8_t *data, bool quiet, WriteState *state) {
     UF2_Block *bl = (void *)data;
+
+    // NRF_LOG_DEBUG("Write magic: %x", bl->magicStart0);
+
     if (!is_uf2_block(bl)) {
         return;
     }
@@ -232,12 +273,16 @@ void write_block(uint32_t block_no, uint8_t *data, bool quiet, WriteState *state
         if (!quiet)
             logval("invalid target addr", bl->targetAddr);
 #endif
+        NRF_LOG_WARNING("Skip block at %x", bl->targetAddr);
         // this happens when we're trying to re-flash CURRENT.UF2 file previously
         // copied from a device; we still want to count these blocks to reset properly
     } else {
         // logval("write block at", bl->targetAddr);
+        NRF_LOG_DEBUG("Write block at %x", bl->targetAddr);
         flash_write(bl->targetAddr, bl->data, bl->payloadSize);
     }
+
+    bool isSet = false;
 
     if (state && bl->numBlocks) {
         if (state->numBlocks != bl->numBlocks) {
@@ -257,12 +302,16 @@ void write_block(uint32_t block_no, uint8_t *data, bool quiet, WriteState *state
             if (state->numWritten >= state->numBlocks) {
                 // wait a little bit before resetting, to avoid Windows transmit error
                 // https://github.com/Microsoft/uf2-samd21/issues/11
-                if (!quiet)
+                if (!quiet) {
                     uf2_timer_start(30);
+                    isSet = true;
+                }
             }
         }
-    } else {
-        if (!quiet)
-            uf2_timer_start(300);
+        NRF_LOG_DEBUG("wr %d=%d (of %d)", state->numWritten, bl->blockNo, bl->numBlocks);
+    }
+
+    if (!isSet && !quiet) {
+        // uf2_timer_start(500);
     }
 }
