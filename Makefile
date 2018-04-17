@@ -16,15 +16,15 @@ SRC_FILES += \
   $(PROJ_DIR)/nrf_block_dev_uf2.c \
   $(PROJ_DIR)/ghostfat.c \
   $(PROJ_DIR)/main.c \
+  $(PROJ_DIR)/dfu_req_handling/dfu-cc.pb.c \
+  $(PROJ_DIR)/dfu_req_handling/dfu_public_key.c \
+  $(PROJ_DIR)/dfu_req_handling/dfu_req_handling.c \
   $(SDK_ROOT)/components/libraries/experimental_log/src/nrf_log_backend_rtt.c \
   $(SDK_ROOT)/components/libraries/experimental_log/src/nrf_log_backend_serial.c \
   $(SDK_ROOT)/components/libraries/experimental_log/src/nrf_log_default_backends.c \
   $(SDK_ROOT)/components/libraries/experimental_log/src/nrf_log_frontend.c \
   $(SDK_ROOT)/components/libraries/experimental_log/src/nrf_log_str_formatter.c \
   $(SDK_ROOT)/components/boards/boards.c \
-  $(PROJ_DIR)/dfu_req_handling/dfu-cc.pb.c \
-  $(PROJ_DIR)/dfu_req_handling/dfu_public_key.c \
-  $(PROJ_DIR)/dfu_req_handling/dfu_req_handling.c \
   $(SDK_ROOT)/components/libraries/util/app_error_weak.c \
   $(SDK_ROOT)/components/libraries/scheduler/app_scheduler.c \
   $(SDK_ROOT)/components/libraries/timer/app_timer.c \

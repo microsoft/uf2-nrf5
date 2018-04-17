@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 - 2017, Nordic Semiconductor ASA
+ * Copyright (c) 2017 - 2018, Nordic Semiconductor ASA
  * 
  * All rights reserved.
  * 
@@ -46,48 +46,215 @@
 #ifdef USE_APP_CONFIG
 #include "app_config.h"
 #endif
+// <h> Application 
+
+//==========================================================
+// <h> Bootloader LEDs Configuration 
+
+//==========================================================
+// <o> DFU_LED_CONFIG_TRANSPORT_ACTIVE_BREATH_MS - Active and Inactive period (in milliseconds) of LED breathing when DFU transport is active (e.g. BLE connected). 
+#ifndef DFU_LED_CONFIG_TRANSPORT_ACTIVE_BREATH_MS
+#define DFU_LED_CONFIG_TRANSPORT_ACTIVE_BREATH_MS 300
+#endif
+
+// <o> DFU_LED_CONFIG_TRANSPORT_INACTIVE_BREATH_MS - Active and Inactive period (in milliseconds) of LED breathing when DFU transport is inactive (e.g. BLE disconnected). 
+#ifndef DFU_LED_CONFIG_TRANSPORT_INACTIVE_BREATH_MS
+#define DFU_LED_CONFIG_TRANSPORT_INACTIVE_BREATH_MS 600
+#endif
+
+// <o> DFU_LED_CONFIG_PROGRESS_BLINK_MS - Active and Inactive period of LED blinking when DFU progress is ongoing. 
+#ifndef DFU_LED_CONFIG_PROGRESS_BLINK_MS
+#define DFU_LED_CONFIG_PROGRESS_BLINK_MS 100
+#endif
+
+// </h> 
+//==========================================================
+
+// </h> 
+//==========================================================
+
 // <h> nRF_Bootloader 
 
 //==========================================================
-// <h> nrf_dfu - DFU Bootloader
+// <h> nrf_bootloader - Bootloader settings
 
 //==========================================================
-// <o> NRF_DFU_INACTIVITY_TIMEOUT_MS - Timeout in ms before automatically starting a valid application due to inactivity  <100-60000000> 
+// <h> Application integrity checks 
 
-
-#ifndef NRF_DFU_INACTIVITY_TIMEOUT_MS
-#define NRF_DFU_INACTIVITY_TIMEOUT_MS 60000000
-#endif
-
-// <o> NRF_DFU_POST_SD_BL_TIMEOUT_MS - Timeout in ms before automatically starting a valid application after a bootloader or SoftDevice update  <100-60000000> 
-
-
-#ifndef NRF_DFU_POST_SD_BL_TIMEOUT_MS
-#define NRF_DFU_POST_SD_BL_TIMEOUT_MS 10000
-#endif
-
-// <q> NRF_DFU_WORKAROUND_PRE_SDK_14_1_0_SD_BL_UPDATE  - Workaround for updating SD+BL with a SD that has increased size. Only valid for updates of SD+BL with BL from SDK 12.x.y - 14.0.x. This workaround has no effect in 14.1.x
+//==========================================================
+// <q> NRF_BL_APP_CRC_CHECK_SKIPPED_ON_GPREGRET2  - Skip integrity check of the application when bit 1 (0-indexed) is set in the GPREGRET2 register.
  
 
-#ifndef NRF_DFU_WORKAROUND_PRE_SDK_14_1_0_SD_BL_UPDATE
-#define NRF_DFU_WORKAROUND_PRE_SDK_14_1_0_SD_BL_UPDATE 1
+#ifndef NRF_BL_APP_CRC_CHECK_SKIPPED_ON_GPREGRET2
+#define NRF_BL_APP_CRC_CHECK_SKIPPED_ON_GPREGRET2 1
 #endif
 
-// <h> DFU flash buffers 
+// <q> NRF_BL_APP_CRC_CHECK_SKIPPED_ON_SYSTEMOFF_RESET  - Skip integrity check of the application when waking up from the System Off state.
+ 
+
+#ifndef NRF_BL_APP_CRC_CHECK_SKIPPED_ON_SYSTEMOFF_RESET
+#define NRF_BL_APP_CRC_CHECK_SKIPPED_ON_SYSTEMOFF_RESET 1
+#endif
+
+// </h> 
+//==========================================================
+
+// <h> DFU mode enter method 
 
 //==========================================================
-// <o> FLASH_BUFFER_COUNT - Number of flash buffers. 
-// <i> Must be a power of two.
+// <e> NRF_BL_DFU_ENTER_METHOD_BUTTON - Enter DFU mode on button press.
+//==========================================================
+#ifndef NRF_BL_DFU_ENTER_METHOD_BUTTON
+#define NRF_BL_DFU_ENTER_METHOD_BUTTON 0
+#endif
+// <o> NRF_BL_DFU_ENTER_METHOD_BUTTON_PIN  - Button for entering DFU mode.
+ 
+// <0=> 0 (P0.0) 
+// <1=> 1 (P0.1) 
+// <2=> 2 (P0.2) 
+// <3=> 3 (P0.3) 
+// <4=> 4 (P0.4) 
+// <5=> 5 (P0.5) 
+// <6=> 6 (P0.6) 
+// <7=> 7 (P0.7) 
+// <8=> 8 (P0.8) 
+// <9=> 9 (P0.9) 
+// <10=> 10 (P0.10) 
+// <11=> 11 (P0.11) 
+// <12=> 12 (P0.12) 
+// <13=> 13 (P0.13) 
+// <14=> 14 (P0.14) 
+// <15=> 15 (P0.15) 
+// <16=> 16 (P0.16) 
+// <17=> 17 (P0.17) 
+// <18=> 18 (P0.18) 
+// <19=> 19 (P0.19) 
+// <20=> 20 (P0.20) 
+// <21=> 21 (P0.21) 
+// <22=> 22 (P0.22) 
+// <23=> 23 (P0.23) 
+// <24=> 24 (P0.24) 
+// <25=> 25 (P0.25) 
+// <26=> 26 (P0.26) 
+// <27=> 27 (P0.27) 
+// <28=> 28 (P0.28) 
+// <29=> 29 (P0.29) 
+// <30=> 30 (P0.30) 
+// <31=> 31 (P0.31) 
+// <32=> 32 (P1.0) 
+// <33=> 33 (P1.1) 
+// <34=> 34 (P1.2) 
+// <35=> 35 (P1.3) 
+// <36=> 36 (P1.4) 
+// <37=> 37 (P1.5) 
+// <38=> 38 (P1.6) 
+// <39=> 39 (P1.7) 
+// <40=> 40 (P1.8) 
+// <41=> 41 (P1.9) 
+// <42=> 42 (P1.10) 
+// <43=> 43 (P1.11) 
+// <44=> 44 (P1.12) 
+// <45=> 45 (P1.13) 
+// <46=> 46 (P1.14) 
+// <47=> 47 (P1.15) 
 
-#ifndef FLASH_BUFFER_COUNT
-#define FLASH_BUFFER_COUNT 4
+#ifndef NRF_BL_DFU_ENTER_METHOD_BUTTON_PIN
+#define NRF_BL_DFU_ENTER_METHOD_BUTTON_PIN 25
 #endif
 
-// <o> FLASH_BUFFER_LENGTH - Length of a flash buffer, in bytes. 
-// <i> Must be a multiple of the word size.
+// </e>
 
-#ifndef FLASH_BUFFER_LENGTH
-#define FLASH_BUFFER_LENGTH 128
+// <q> NRF_BL_DFU_ENTER_METHOD_PINRESET  - Enter DFU mode on pin reset.
+ 
+
+#ifndef NRF_BL_DFU_ENTER_METHOD_PINRESET
+#define NRF_BL_DFU_ENTER_METHOD_PINRESET 1
+#endif
+
+// <q> NRF_BL_DFU_ENTER_METHOD_GPREGRET  - Enter DFU mode when bit 1 (0-indexed) is set in the NRF_POWER_GPREGRET register.
+ 
+
+#ifndef NRF_BL_DFU_ENTER_METHOD_GPREGRET
+#define NRF_BL_DFU_ENTER_METHOD_GPREGRET 0
+#endif
+
+// <q> NRF_BL_DFU_ENTER_METHOD_BUTTONLESS  - Enter DFU mode when the Boolean enter_buttonless_dfu in DFU settings is true.
+ 
+
+#ifndef NRF_BL_DFU_ENTER_METHOD_BUTTONLESS
+#define NRF_BL_DFU_ENTER_METHOD_BUTTONLESS 0
+#endif
+
+// </h> 
+//==========================================================
+
+// <h> DFU timers 
+
+//==========================================================
+// <o> NRF_BL_DFU_CONTINUATION_TIMEOUT_MS - Timeout in ms when expecting an update immediately.  <100-60000000> 
+
+
+// <i> This timeout is used after updating the SoftDevice, when there is
+// <i> already a valid application present. The bootloader will enter DFU mode
+// <i> for a short time instead of booting the old application to allow the host
+// <i> to immediately transfer a new application if it wishes.
+
+#ifndef NRF_BL_DFU_CONTINUATION_TIMEOUT_MS
+#define NRF_BL_DFU_CONTINUATION_TIMEOUT_MS 10000
+#endif
+
+// <o> NRF_BL_DFU_INACTIVITY_TIMEOUT_MS - Timeout in ms before automatically starting a valid application due to inactivity.  <0-60000000> 
+
+
+// <i> If 0, no inactivity timer will be used. Values 1-99 are invalid.
+
+#ifndef NRF_BL_DFU_INACTIVITY_TIMEOUT_MS
+#define NRF_BL_DFU_INACTIVITY_TIMEOUT_MS 0
+#endif
+
+// </h> 
+//==========================================================
+
+// <h> Watchdog timer 
+
+//==========================================================
+// <o> NRF_BL_WDT_MAX_SCHEDULER_LATENCY_MS - Maximum latency of the scheduler in miliseconds 
+// <i> Maximum latency of the scheduler is compared with
+// <i> watchdog counter reload value (CRV). If latency is big
+// <i> enough, the watchdog will be fed from internal app_timer
+// <i> handler along with feed from user function. If latency
+// <i> is smaller than CRV, the watchdog will not be internally fed once
+// <i> it will be externally fed. Maximum latency is mainly affected
+// <i> by flash operations.
+
+#ifndef NRF_BL_WDT_MAX_SCHEDULER_LATENCY_MS
+#define NRF_BL_WDT_MAX_SCHEDULER_LATENCY_MS 10000
+#endif
+
+// </h> 
+//==========================================================
+
+// <h> Misc Bootloader settings 
+
+//==========================================================
+// <o> NRF_BL_FW_COPY_PROGRESS_STORE_STEP - Number of pages copied after which progress in the settings page is updated. 
+// <i> Progress stored in the settings page allows the bootloader to resume
+// <i> copying the new firmware in case of interruption (reset).
+// <i> If the value is small, then the resume point is more accurate. However,
+// <i>  it also impacts negatively on flash wear.
+
+#ifndef NRF_BL_FW_COPY_PROGRESS_STORE_STEP
+#define NRF_BL_FW_COPY_PROGRESS_STORE_STEP 8
+#endif
+
+// <q> NRF_BL_SETTINGS_PAGE_PROTECT  - Write-protect the settings page before starting the application.
+ 
+
+// <i> The settings page may be used to exchange information between the bootloader and the application.
+// <i> In that case it should not be protected.
+
+#ifndef NRF_BL_SETTINGS_PAGE_PROTECT
+#define NRF_BL_SETTINGS_PAGE_PROTECT 1
 #endif
 
 // </h> 
@@ -107,46 +274,899 @@
 #ifndef NRF_CRYPTO_ENABLED
 #define NRF_CRYPTO_ENABLED 1
 #endif
-// <q> NRF_CRYPTO_BACKEND_CC310_LIB  - Enable the ARM Cryptocell CC310 backend
+// <o> NRF_CRYPTO_ALLOCATOR  - Memory allocator
  
 
-// <i> The hardware-accelerated cryptography backend is available only on nRF52840.
+// <i> Choose memory allocator used by nrf_crypto. Default is alloca if possible or nrf_malloc otherwise. If 'User macros' are selected then user have to create 'nrf_crypto_allocator.h' file containing NRF_CRYPTO_ALLOC, NRF_CRYPTO_FREE and NRF_CRYPTO_ALLOC_ON_STACK
+// <0=> Default 
+// <1=> User macros 
+// <2=> On stack (alloca) 
+// <3=> C dynamic memory (malloc) 
+// <4=> SDK Memory Manager (nrf_malloc) 
 
-#ifndef NRF_CRYPTO_BACKEND_CC310_LIB
-#define NRF_CRYPTO_BACKEND_CC310_LIB 0
+#ifndef NRF_CRYPTO_ALLOCATOR
+#define NRF_CRYPTO_ALLOCATOR 0
 #endif
 
-// <e> NRF_CRYPTO_BACKEND_MICRO_ECC - Enable the micro-ecc software backend
+// <e> NRF_CRYPTO_BACKEND_CC310_BL_ENABLED - Enable the ARM Cryptocell CC310 reduced backend.
 
-// <i> The micro-ecc library provides a software implementation of ECC cryptography for nRF5 Series devices.
+// <i> The CC310 hardware-accelerated cryptography backend with reduced functionality and footprint (only available on nRF52840).
 //==========================================================
-#ifndef NRF_CRYPTO_BACKEND_MICRO_ECC
-#define NRF_CRYPTO_BACKEND_MICRO_ECC 1
+#ifndef NRF_CRYPTO_BACKEND_CC310_BL_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_BL_ENABLED 1
 #endif
-// <q> NRF_CRYPTO_BACKEND_MICRO_ECC_SHA256  - Enable SHA256
+// <q> NRF_CRYPTO_BACKEND_CC310_BL_ECC_SECP224R1_ENABLED  - Enable the secp224r1 elliptic curve support using CC310_BL.
  
 
-// <i> Enable SHA256 cryptographic hash functionality.
-// <i> Enable this setting if you need SHA256 support, for example to verify signatures.
-
-#ifndef NRF_CRYPTO_BACKEND_MICRO_ECC_SHA256
-#define NRF_CRYPTO_BACKEND_MICRO_ECC_SHA256 1
+#ifndef NRF_CRYPTO_BACKEND_CC310_BL_ECC_SECP224R1_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_BL_ECC_SECP224R1_ENABLED 0
 #endif
 
-// <q> NRF_CRYPTO_BACKEND_MICRO_ECC_RNG  - Enable random number generator
+// <q> NRF_CRYPTO_BACKEND_CC310_BL_ECC_SECP256R1_ENABLED  - Enable the secp256r1 elliptic curve support using CC310_BL.
  
 
-// <i> Enable random number generation.
-// <i> Enable this setting if you need to generate cryptographic keys.
-// <i> This setting requires the RNG peripheral driver to be present.
+#ifndef NRF_CRYPTO_BACKEND_CC310_BL_ECC_SECP256R1_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_BL_ECC_SECP256R1_ENABLED 1
+#endif
 
-#ifndef NRF_CRYPTO_BACKEND_MICRO_ECC_RNG
-#define NRF_CRYPTO_BACKEND_MICRO_ECC_RNG 0
+// <q> NRF_CRYPTO_BACKEND_CC310_BL_HASH_SHA256_ENABLED  - CC310_BL SHA-256 hash functionality.
+ 
+
+// <i> CC310_BL backend implementation for hardware-accelerated SHA-256.
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_BL_HASH_SHA256_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_BL_HASH_SHA256_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_BL_HASH_LITTLE_ENDIAN_DIGEST_ENABLED  - nrf_cc310_bl hash outputs digests in little endian
+ 
+
+// <i> Makes the nRF SH hash functions output digests in little endian format. Only for use in nRF SDK DFU!
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_BL_HASH_LITTLE_ENDIAN_DIGEST_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_BL_HASH_LITTLE_ENDIAN_DIGEST_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_BL_HASH_AUTOMATIC_RAM_BUFFER_ENABLED  - nrf_cc310_bl buffers to RAM before running hash operation
+ 
+
+// <i> Enabling this makes hashing of addresses in FLASH range possible. Size of buffer allocated for hashing is set by NRF_CRYPTO_BACKEND_CC310_BL_HASH_AUTOMATIC_RAM_BUFFER_SIZE
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_BL_HASH_AUTOMATIC_RAM_BUFFER_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_BL_HASH_AUTOMATIC_RAM_BUFFER_ENABLED 1
+#endif
+
+// <o> NRF_CRYPTO_BACKEND_CC310_BL_HASH_AUTOMATIC_RAM_BUFFER_SIZE - nrf_cc310_bl hash outputs digests in little endian 
+// <i> Makes the nrf_cc310_bl hash functions output digests in little endian format. Only for use in nRF SDK DFU!
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_BL_HASH_AUTOMATIC_RAM_BUFFER_SIZE
+#define NRF_CRYPTO_BACKEND_CC310_BL_HASH_AUTOMATIC_RAM_BUFFER_SIZE 4096
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_BL_ECC_LITTLE_ENDIAN_ENABLED  - Enable non-standard little endian byte order in nrf_cc310_bl ECC functions.
+ 
+
+// <i> This affects parameters for all nrf_cc310_bl ECC APIs (raw keys, signature, digest). Only for use in nRF SDK DFU!
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_BL_ECC_LITTLE_ENDIAN_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_BL_ECC_LITTLE_ENDIAN_ENABLED 1
+#endif
+
+// </e>
+
+// <e> NRF_CRYPTO_BACKEND_CC310_ENABLED - Enable the ARM Cryptocell CC310 backend.
+
+// <i> The CC310 hardware-accelerated cryptography backend (only available on nRF52840).
+//==========================================================
+#ifndef NRF_CRYPTO_BACKEND_CC310_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_ENABLED 0
+#endif
+// <q> NRF_CRYPTO_BACKEND_CC310_AES_CBC_ENABLED  - Enable the AES CBC mode using CC310.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_AES_CBC_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_AES_CBC_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_AES_CTR_ENABLED  - Enable the AES CTR mode using CC310.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_AES_CTR_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_AES_CTR_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_AES_ECB_ENABLED  - Enable the AES ECB mode using CC310.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_AES_ECB_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_AES_ECB_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_AES_CBC_MAC_ENABLED  - Enable the AES CBC_MAC mode using CC310.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_AES_CBC_MAC_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_AES_CBC_MAC_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_AES_CMAC_ENABLED  - Enable the AES CMAC mode using CC310.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_AES_CMAC_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_AES_CMAC_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_AES_CCM_ENABLED  - Enable the AES CCM mode using CC310.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_AES_CCM_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_AES_CCM_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_AES_CCM_STAR_ENABLED  - Enable the AES CCM* mode using CC310.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_AES_CCM_STAR_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_AES_CCM_STAR_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_CHACHA_POLY_ENABLED  - Enable the CHACHA-POLY mode using CC310.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_CHACHA_POLY_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_CHACHA_POLY_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_ECC_SECP160R1_ENABLED  - Enable the secp160r1 elliptic curve support using CC310.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_ECC_SECP160R1_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_ECC_SECP160R1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_ECC_SECP160R2_ENABLED  - Enable the secp160r2 elliptic curve support using CC310.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_ECC_SECP160R2_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_ECC_SECP160R2_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_ECC_SECP192R1_ENABLED  - Enable the secp192r1 elliptic curve support using CC310.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_ECC_SECP192R1_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_ECC_SECP192R1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_ECC_SECP224R1_ENABLED  - Enable the secp224r1 elliptic curve support using CC310.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_ECC_SECP224R1_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_ECC_SECP224R1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_ECC_SECP256R1_ENABLED  - Enable the secp256r1 elliptic curve support using CC310.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_ECC_SECP256R1_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_ECC_SECP256R1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_ECC_SECP384R1_ENABLED  - Enable the secp384r1 elliptic curve support using CC310.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_ECC_SECP384R1_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_ECC_SECP384R1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_ECC_SECP521R1_ENABLED  - Enable the secp521r1 elliptic curve support using CC310.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_ECC_SECP521R1_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_ECC_SECP521R1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_ECC_SECP160K1_ENABLED  - Enable the secp160k1 elliptic curve support using CC310.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_ECC_SECP160K1_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_ECC_SECP160K1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_ECC_SECP192K1_ENABLED  - Enable the secp192k1 elliptic curve support using CC310.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_ECC_SECP192K1_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_ECC_SECP192K1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_ECC_SECP224K1_ENABLED  - Enable the secp224k1 elliptic curve support using CC310.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_ECC_SECP224K1_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_ECC_SECP224K1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_ECC_SECP256K1_ENABLED  - Enable the secp256k1 elliptic curve support using CC310.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_ECC_SECP256K1_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_ECC_SECP256K1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_HASH_SHA256_ENABLED  - CC310 SHA-256 hash functionality.
+ 
+
+// <i> CC310 backend implementation for hardware-accelerated SHA-256.
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_HASH_SHA256_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_HASH_SHA256_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_HASH_SHA512_ENABLED  - CC310 SHA-512 hash functionality
+ 
+
+// <i> CC310 backend implementation for SHA-512 (in software).
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_HASH_SHA512_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_HASH_SHA512_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_HMAC_SHA256_ENABLED  - CC310 HMAC using SHA-256
+ 
+
+// <i> CC310 backend implementation for HMAC using hardware-accelerated SHA-256.
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_HMAC_SHA256_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_HMAC_SHA256_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_HMAC_SHA512_ENABLED  - CC310 HMAC using SHA-512
+ 
+
+// <i> CC310 backend implementation for HMAC using SHA-512 (in software).
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_HMAC_SHA512_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_HMAC_SHA512_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_CC310_RNG_ENABLED  - Enable RNG support using CC310.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_CC310_RNG_ENABLED
+#define NRF_CRYPTO_BACKEND_CC310_RNG_ENABLED 1
+#endif
+
+// </e>
+
+// <e> NRF_CRYPTO_BACKEND_CIFRA_ENABLED - Enable the Cifra backend.
+//==========================================================
+#ifndef NRF_CRYPTO_BACKEND_CIFRA_ENABLED
+#define NRF_CRYPTO_BACKEND_CIFRA_ENABLED 0
+#endif
+// <q> NRF_CRYPTO_BACKEND_CIFRA_AES_EAX_ENABLED  - Enable the AES EAX mode using Cifra.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_CIFRA_AES_EAX_ENABLED
+#define NRF_CRYPTO_BACKEND_CIFRA_AES_EAX_ENABLED 1
+#endif
+
+// </e>
+
+// <e> NRF_CRYPTO_BACKEND_MBEDTLS_ENABLED - Enable the mbed TLS backend.
+//==========================================================
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_ENABLED 0
+#endif
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_AES_CBC_ENABLED  - Enable the AES CBC mode mbed TLS.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_AES_CBC_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_AES_CBC_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_AES_CTR_ENABLED  - Enable the AES CTR mode using mbed TLS.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_AES_CTR_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_AES_CTR_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_AES_CFB_ENABLED  - Enable the AES CFB mode using mbed TLS.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_AES_CFB_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_AES_CFB_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_AES_ECB_ENABLED  - Enable the AES ECB mode using mbed TLS.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_AES_ECB_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_AES_ECB_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_AES_CBC_MAC_ENABLED  - Enable the AES CBC MAC mode using mbed TLS.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_AES_CBC_MAC_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_AES_CBC_MAC_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_AES_CMAC_ENABLED  - Enable the AES CMAC mode using mbed TLS.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_AES_CMAC_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_AES_CMAC_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_AES_CCM_ENABLED  - Enable the AES CCM mode using mbed TLS.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_AES_CCM_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_AES_CCM_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_AES_GCM_ENABLED  - Enable the AES GCM mode using mbed TLS.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_AES_GCM_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_AES_GCM_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP192R1_ENABLED  - Enable secp192r1 (NIST 192-bit) curve
+ 
+
+// <i> Enable this setting if you need secp192r1 (NIST 192-bit) support using MBEDTLS
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP192R1_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP192R1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP224R1_ENABLED  - Enable secp224r1 (NIST 224-bit) curve
+ 
+
+// <i> Enable this setting if you need secp224r1 (NIST 224-bit) support using MBEDTLS
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP224R1_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP224R1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP256R1_ENABLED  - Enable secp256r1 (NIST 256-bit) curve
+ 
+
+// <i> Enable this setting if you need secp256r1 (NIST 256-bit) support using MBEDTLS
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP256R1_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP256R1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP384R1_ENABLED  - Enable secp384r1 (NIST 384-bit) curve
+ 
+
+// <i> Enable this setting if you need secp384r1 (NIST 384-bit) support using MBEDTLS
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP384R1_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP384R1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP521R1_ENABLED  - Enable secp521r1 (NIST 521-bit) curve
+ 
+
+// <i> Enable this setting if you need secp521r1 (NIST 521-bit) support using MBEDTLS
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP521R1_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP521R1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP192K1_ENABLED  - Enable secp192k1 (Koblitz 192-bit) curve
+ 
+
+// <i> Enable this setting if you need secp192k1 (Koblitz 192-bit) support using MBEDTLS
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP192K1_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP192K1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP224K1_ENABLED  - Enable secp224k1 (Koblitz 224-bit) curve
+ 
+
+// <i> Enable this setting if you need secp224k1 (Koblitz 224-bit) support using MBEDTLS
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP224K1_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP224K1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP256K1_ENABLED  - Enable secp256k1 (Koblitz 256-bit) curve
+ 
+
+// <i> Enable this setting if you need secp256k1 (Koblitz 256-bit) support using MBEDTLS
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP256K1_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_ECC_SECP256K1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_ECC_BP256R1_ENABLED  - Enable bp256r1 (Brainpool 256-bit) curve
+ 
+
+// <i> Enable this setting if you need bp256r1 (Brainpool 256-bit) support using MBEDTLS
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_ECC_BP256R1_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_ECC_BP256R1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_ECC_BP384R1_ENABLED  - Enable bp384r1 (Brainpool 384-bit) curve
+ 
+
+// <i> Enable this setting if you need bp384r1 (Brainpool 384-bit) support using MBEDTLS
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_ECC_BP384R1_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_ECC_BP384R1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_ECC_BP512R1_ENABLED  - Enable bp512r1 (Brainpool 512-bit) curve
+ 
+
+// <i> Enable this setting if you need bp512r1 (Brainpool 512-bit) support using MBEDTLS
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_ECC_BP512R1_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_ECC_BP512R1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_ECC_CURVE25519_ENABLED  - Enable Curve25519 curve
+ 
+
+// <i> Enable this setting if you need Curve25519 support using MBEDTLS
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_ECC_CURVE25519_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_ECC_CURVE25519_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_HASH_SHA256_ENABLED  - Enable mbed TLS SHA-256 hash functionality.
+ 
+
+// <i> mbed TLS backend implementation for SHA-256.
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_HASH_SHA256_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_HASH_SHA256_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_HASH_SHA512_ENABLED  - Enable mbed TLS SHA-512 hash functionality.
+ 
+
+// <i> mbed TLS backend implementation for SHA-512.
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_HASH_SHA512_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_HASH_SHA512_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_HMAC_SHA256_ENABLED  - Enable mbed TLS HMAC using SHA-256.
+ 
+
+// <i> mbed TLS backend implementation for HMAC using SHA-256.
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_HMAC_SHA256_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_HMAC_SHA256_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MBEDTLS_HMAC_SHA512_ENABLED  - Enable mbed TLS HMAC using SHA-512.
+ 
+
+// <i> mbed TLS backend implementation for HMAC using SHA-512.
+
+#ifndef NRF_CRYPTO_BACKEND_MBEDTLS_HMAC_SHA512_ENABLED
+#define NRF_CRYPTO_BACKEND_MBEDTLS_HMAC_SHA512_ENABLED 1
+#endif
+
+// </e>
+
+// <e> NRF_CRYPTO_BACKEND_MICRO_ECC_ENABLED - Enable the micro-ecc backend.
+//==========================================================
+#ifndef NRF_CRYPTO_BACKEND_MICRO_ECC_ENABLED
+#define NRF_CRYPTO_BACKEND_MICRO_ECC_ENABLED 0
+#endif
+// <q> NRF_CRYPTO_BACKEND_MICRO_ECC_ECC_SECP192R1_ENABLED  - Enable secp192r1 (NIST 192-bit) curve
+ 
+
+// <i> Enable this setting if you need secp192r1 (NIST 192-bit) support using micro-ecc
+
+#ifndef NRF_CRYPTO_BACKEND_MICRO_ECC_ECC_SECP192R1_ENABLED
+#define NRF_CRYPTO_BACKEND_MICRO_ECC_ECC_SECP192R1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MICRO_ECC_ECC_SECP224R1_ENABLED  - Enable secp224r1 (NIST 224-bit) curve
+ 
+
+// <i> Enable this setting if you need secp224r1 (NIST 224-bit) support using micro-ecc
+
+#ifndef NRF_CRYPTO_BACKEND_MICRO_ECC_ECC_SECP224R1_ENABLED
+#define NRF_CRYPTO_BACKEND_MICRO_ECC_ECC_SECP224R1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MICRO_ECC_ECC_SECP256R1_ENABLED  - Enable secp256r1 (NIST 256-bit) curve
+ 
+
+// <i> Enable this setting if you need secp256r1 (NIST 256-bit) support using micro-ecc
+
+#ifndef NRF_CRYPTO_BACKEND_MICRO_ECC_ECC_SECP256R1_ENABLED
+#define NRF_CRYPTO_BACKEND_MICRO_ECC_ECC_SECP256R1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MICRO_ECC_ECC_SECP256K1_ENABLED  - Enable secp256k1 (Koblitz 256-bit) curve
+ 
+
+// <i> Enable this setting if you need secp256k1 (Koblitz 256-bit) support using micro-ecc
+
+#ifndef NRF_CRYPTO_BACKEND_MICRO_ECC_ECC_SECP256K1_ENABLED
+#define NRF_CRYPTO_BACKEND_MICRO_ECC_ECC_SECP256K1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MICRO_ECC_PUBLIC_KEY_TRUSTED_ENABLED  - Always trust raw public key (it will cause a security issue if the public key comes from an untrusted source)
+ 
+
+// <i> Enable this setting if you want to reduce flash usage. Only for use in nRF SDK DFU! Never enable it if the raw public key comes from an untrusted source.
+
+#ifndef NRF_CRYPTO_BACKEND_MICRO_ECC_PUBLIC_KEY_TRUSTED_ENABLED
+#define NRF_CRYPTO_BACKEND_MICRO_ECC_PUBLIC_KEY_TRUSTED_ENABLED 0
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_MICRO_ECC_LITTLE_ENDIAN_ENABLED  - Enable non-standard little endian byte order.
+ 
+
+// <i> This affects parameters for all ECC API (raw keys, signature, digest, shared secret). Only for use in nRF SDK DFU!
+
+#ifndef NRF_CRYPTO_BACKEND_MICRO_ECC_LITTLE_ENDIAN_ENABLED
+#define NRF_CRYPTO_BACKEND_MICRO_ECC_LITTLE_ENDIAN_ENABLED 0
+#endif
+
+// </e>
+
+// <e> NRF_CRYPTO_BACKEND_NRF_HW_RNG_ENABLED - Enable the nRF HW RNG backend.
+
+// <i> The nRF HW backend provide access to RNG peripheral in nRF5x devices.
+//==========================================================
+#ifndef NRF_CRYPTO_BACKEND_NRF_HW_RNG_ENABLED
+#define NRF_CRYPTO_BACKEND_NRF_HW_RNG_ENABLED 0
+#endif
+// <q> NRF_CRYPTO_BACKEND_NRF_HW_RNG_MBEDTLS_CTR_DRBG_ENABLED  - Enable mbed TLS CTR-DRBG algorithm.
+ 
+
+// <i> Enable mbed TLS CTR-DRBG standardized by NIST (NIST SP 800-90A Rev. 1). The nRF HW RNG is used as an entropy source for seeding.
+
+#ifndef NRF_CRYPTO_BACKEND_NRF_HW_RNG_MBEDTLS_CTR_DRBG_ENABLED
+#define NRF_CRYPTO_BACKEND_NRF_HW_RNG_MBEDTLS_CTR_DRBG_ENABLED 1
+#endif
+
+// </e>
+
+// <e> NRF_CRYPTO_BACKEND_NRF_SW_ENABLED - Enable the legacy nRFx sw for crypto.
+
+// <i> The nRF SW cryptography backend (only used in bootloader context).
+//==========================================================
+#ifndef NRF_CRYPTO_BACKEND_NRF_SW_ENABLED
+#define NRF_CRYPTO_BACKEND_NRF_SW_ENABLED 0
+#endif
+// <q> NRF_CRYPTO_BACKEND_NRF_SW_HASH_SHA256_ENABLED  - nRF SW hash backend support for SHA-256
+ 
+
+// <i> The nRF SW backend provide access to nRF SDK legacy hash implementation of SHA-256.
+
+#ifndef NRF_CRYPTO_BACKEND_NRF_SW_HASH_SHA256_ENABLED
+#define NRF_CRYPTO_BACKEND_NRF_SW_HASH_SHA256_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_NRF_SW_HASH_LITTLE_ENDIAN_DIGEST_ENABLED  - nRF SW hash outputs digests in little endian
+ 
+
+// <i> Makes the nRF SH hash functions output digests in little endian format. Only for use in nRF SDK DFU!
+
+#ifndef NRF_CRYPTO_BACKEND_NRF_SW_HASH_LITTLE_ENDIAN_DIGEST_ENABLED
+#define NRF_CRYPTO_BACKEND_NRF_SW_HASH_LITTLE_ENDIAN_DIGEST_ENABLED 1
+#endif
+
+// </e>
+
+// <e> NRF_CRYPTO_BACKEND_OBERON_ENABLED - Enable the Oberon backend
+
+// <i> The Oberon backend
+//==========================================================
+#ifndef NRF_CRYPTO_BACKEND_OBERON_ENABLED
+#define NRF_CRYPTO_BACKEND_OBERON_ENABLED 0
+#endif
+// <q> NRF_CRYPTO_BACKEND_OBERON_CHACHA_POLY_ENABLED  - Enable the CHACHA-POLY mode using Oberon.
+ 
+
+#ifndef NRF_CRYPTO_BACKEND_OBERON_CHACHA_POLY_ENABLED
+#define NRF_CRYPTO_BACKEND_OBERON_CHACHA_POLY_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_OBERON_ECC_SECP256R1_ENABLED  - Enable secp256r1 curve
+ 
+
+// <i> Enable this setting if you need secp256r1 curve support using Oberon library
+
+#ifndef NRF_CRYPTO_BACKEND_OBERON_ECC_SECP256R1_ENABLED
+#define NRF_CRYPTO_BACKEND_OBERON_ECC_SECP256R1_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_OBERON_ECC_CURVE25519_ENABLED  - Enable Curve25519 ECDH
+ 
+
+// <i> Enable this setting if you need Curve25519 ECDH support using Oberon library
+
+#ifndef NRF_CRYPTO_BACKEND_OBERON_ECC_CURVE25519_ENABLED
+#define NRF_CRYPTO_BACKEND_OBERON_ECC_CURVE25519_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_OBERON_ECC_ED25519_ENABLED  - Enable Ed25519 signature scheme
+ 
+
+// <i> Enable this setting if you need Ed25519 support using Oberon library
+
+#ifndef NRF_CRYPTO_BACKEND_OBERON_ECC_ED25519_ENABLED
+#define NRF_CRYPTO_BACKEND_OBERON_ECC_ED25519_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_OBERON_HASH_SHA256_ENABLED  - Oberon SHA-256 hash functionality
+ 
+
+// <i> Oberon backend implementation for SHA-256.
+
+#ifndef NRF_CRYPTO_BACKEND_OBERON_HASH_SHA256_ENABLED
+#define NRF_CRYPTO_BACKEND_OBERON_HASH_SHA256_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_OBERON_HASH_SHA512_ENABLED  - Oberon SHA-512 hash functionality
+ 
+
+// <i> Oberon backend implementation for SHA-512.
+
+#ifndef NRF_CRYPTO_BACKEND_OBERON_HASH_SHA512_ENABLED
+#define NRF_CRYPTO_BACKEND_OBERON_HASH_SHA512_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_OBERON_HMAC_SHA256_ENABLED  - Oberon HMAC using SHA-256
+ 
+
+// <i> Oberon backend implementation for HMAC using SHA-256.
+
+#ifndef NRF_CRYPTO_BACKEND_OBERON_HMAC_SHA256_ENABLED
+#define NRF_CRYPTO_BACKEND_OBERON_HMAC_SHA256_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_BACKEND_OBERON_HMAC_SHA512_ENABLED  - Oberon HMAC using SHA-512
+ 
+
+// <i> Oberon backend implementation for HMAC using SHA-512.
+
+#ifndef NRF_CRYPTO_BACKEND_OBERON_HMAC_SHA512_ENABLED
+#define NRF_CRYPTO_BACKEND_OBERON_HMAC_SHA512_ENABLED 1
 #endif
 
 // </e>
 
 // </e>
+
+// <h> nrf_crypto_rng - RNG Configuration
+
+//==========================================================
+// <q> NRF_CRYPTO_RNG_STATIC_MEMORY_BUFFERS_ENABLED  - Use static memory buffers for context and temporary init buffer.
+ 
+
+// <i> Always recommended when using the nRF HW RNG as the context and temporary buffers are small. Consider disabling if using the CC310 RNG in a RAM constrained application. In this case, memory must be provided to nrf_crypto_rng_init, or it can be allocated internally provided that NRF_CRYPTO_ALLOCATOR does not allocate memory on the stack.
+
+#ifndef NRF_CRYPTO_RNG_STATIC_MEMORY_BUFFERS_ENABLED
+#define NRF_CRYPTO_RNG_STATIC_MEMORY_BUFFERS_ENABLED 1
+#endif
+
+// <q> NRF_CRYPTO_RNG_AUTO_INIT_ENABLED  - Initialize the RNG module automatically when nrf_crypto is initialized.
+ 
+
+// <i> Automatic initialization is only supported with static or internally allocated context and temporary memory.
+
+#ifndef NRF_CRYPTO_RNG_AUTO_INIT_ENABLED
+#define NRF_CRYPTO_RNG_AUTO_INIT_ENABLED 1
+#endif
+
+// </h> 
+//==========================================================
+
+// </h> 
+//==========================================================
+
+// <h> nRF_DFU 
+
+//==========================================================
+// <h> nrf_dfu - Device Firmware Upgrade
+
+//==========================================================
+// <h> DFU transport 
+
+//==========================================================
+// <e> NRF_DFU_TRANSPORT_BLE - BLE transport settings
+//==========================================================
+#ifndef NRF_DFU_TRANSPORT_BLE
+#define NRF_DFU_TRANSPORT_BLE 0
+#endif
+// <s> NRF_DFU_BLE_ADV_NAME - Default advertising name.
+#ifndef NRF_DFU_BLE_ADV_NAME
+#define NRF_DFU_BLE_ADV_NAME "DfuTarg"
+#endif
+
+// <h> BLE DFU security 
+
+//==========================================================
+// <q> NRF_DFU_BLE_REQUIRES_BONDS  - Require bond with peer.
+ 
+
+#ifndef NRF_DFU_BLE_REQUIRES_BONDS
+#define NRF_DFU_BLE_REQUIRES_BONDS 0
+#endif
+
+// </h> 
+//==========================================================
+
+// <h> BLE DFU connection 
+
+//==========================================================
+// <o> NRF_DFU_BLE_MIN_CONN_INTERVAL - Minimum connection interval (units). 
+// <i> Minimum GAP connection interval, in 1.25 ms units.
+
+#ifndef NRF_DFU_BLE_MIN_CONN_INTERVAL
+#define NRF_DFU_BLE_MIN_CONN_INTERVAL 12
+#endif
+
+// <o> NRF_DFU_BLE_MAX_CONN_INTERVAL - Maximum connection interval (units). 
+// <i> Maximum GAP connection interval, in 1.25 ms units.
+
+#ifndef NRF_DFU_BLE_MAX_CONN_INTERVAL
+#define NRF_DFU_BLE_MAX_CONN_INTERVAL 12
+#endif
+
+// <o> NRF_DFU_BLE_CONN_SUP_TIMEOUT_MS - Supervision timeout (ms). 
+// <i> GAP connection supervision timeout, in milliseconds.
+
+#ifndef NRF_DFU_BLE_CONN_SUP_TIMEOUT_MS
+#define NRF_DFU_BLE_CONN_SUP_TIMEOUT_MS 6000
+#endif
+
+// </h> 
+//==========================================================
+
+// <h> BLE DFU buffers 
+
+//==========================================================
+// <e> NRF_DFU_BLE_BUFFERS_OVERRIDE 
+
+// <i> Check this option to override the default number of buffers.
+//==========================================================
+#ifndef NRF_DFU_BLE_BUFFERS_OVERRIDE
+#define NRF_DFU_BLE_BUFFERS_OVERRIDE 0
+#endif
+// <o> NRF_DFU_BLE_BUFFERS - Number of buffers in the BLE transport. 
+// <i> Number of buffers to store incoming data while it is being written to flash.
+// <i> Reduce this value to save RAM. If this value is too low, the DFU process will fail.
+
+#ifndef NRF_DFU_BLE_BUFFERS
+#define NRF_DFU_BLE_BUFFERS 8
+#endif
+
+// </e>
+
+// </h> 
+//==========================================================
+
+// </e>
+
+// </h> 
+//==========================================================
+
+// <h> DFU protocol 
+
+//==========================================================
+// <q> NRF_DFU_PROTOCOL_FW_VERSION_MSG  - Firmware version message support.
+ 
+
+// <i> Firmware version message support.
+// <i> If disabled, firmware version requests will return NRF_DFU_RES_CODE_OP_CODE_NOT_SUPPORTED.
+
+#ifndef NRF_DFU_PROTOCOL_FW_VERSION_MSG
+#define NRF_DFU_PROTOCOL_FW_VERSION_MSG 1
+#endif
+
+// <q> NRF_DFU_PROTOCOL_VERSION_MSG  - Protocol version message support.
+ 
+
+// <i> Protocol version message support.
+// <i> If disabled, protocol version requests will return NRF_DFU_RES_CODE_OP_CODE_NOT_SUPPORTED.
+
+#ifndef NRF_DFU_PROTOCOL_VERSION_MSG
+#define NRF_DFU_PROTOCOL_VERSION_MSG 1
+#endif
+
+// </h> 
+//==========================================================
+
+// <h> DFU security 
+
+//==========================================================
+// <q> NRF_DFU_APP_DOWNGRADE_PREVENTION  - Check the firmware version and SoftDevice requirements of application (and SoftDevice) updates.
+ 
+
+// <i> Whether to check the incoming version against the version of the existing app and/or
+// <i> the incoming SoftDevice requirements against the existing SoftDevice.
+// <i> This applies to application updates, and possibly to SoftDevice updates.
+// <i> Disabling this causes the checks to always ignore the incoming firmware version and
+// <i> to ignore the SoftDevice requirements if the first requirement is 0.
+// <i> This does not apply the bootloader updates. If the bootloader depends on the SoftDevice
+// <i> e.g. for BLE transport, this does not apply to SoftDevice updates.
+// <i> See @ref lib_bootloader_dfu_validation for more information.
+// <i> When signed updates are required, version checking should always be enabled.
+
+#ifndef NRF_DFU_APP_DOWNGRADE_PREVENTION
+#define NRF_DFU_APP_DOWNGRADE_PREVENTION 0
+#endif
+
+// <q> NRF_DFU_FORCE_DUAL_BANK_APP_UPDATES  - Accept only dual-bank application updates.
+ 
+
+// <i> If not enabled then if there is not enough space to perform dual-bank update
+// <i> application is deleted and single-bank update is performed. In case it is considered
+// <i> security concern user can prefer to discard update request rather than overwrite
+// <i> current application.
+
+#ifndef NRF_DFU_FORCE_DUAL_BANK_APP_UPDATES
+#define NRF_DFU_FORCE_DUAL_BANK_APP_UPDATES 0
+#endif
+
+// <o> NRF_DFU_HW_VERSION - Device hardware version. 
+// <i> This is used to determine if given update is targeting the device.
+// <i> It is checked against the hw_version value in the init packet
+
+#ifndef NRF_DFU_HW_VERSION
+#define NRF_DFU_HW_VERSION 52
+#endif
+
+// <q> NRF_DFU_REQUIRE_SIGNED_APP_UPDATE  - Require a valid signature to update the application or SoftDevice.
+ 
+
+#ifndef NRF_DFU_REQUIRE_SIGNED_APP_UPDATE
+#define NRF_DFU_REQUIRE_SIGNED_APP_UPDATE 0
+#endif
+
+// <q> NRF_DFU_SINGLE_BANK_APP_UPDATES  - Place the application and the SoftDevice directly where they are supposed to be.
+ 
+
+// <i> Note that this creates security concerns when signing and  version checks
+// <i> are enabled. An attacker will be able to delete (but not replace)
+// <i> the current app or SoftDevice without knowing the signature key.
+
+#ifndef NRF_DFU_SINGLE_BANK_APP_UPDATES
+#define NRF_DFU_SINGLE_BANK_APP_UPDATES 1
+#endif
+
+// </h> 
+//==========================================================
+
+// <h> Misc DFU settings 
+
+//==========================================================
+// <q> NRF_DFU_SAVE_PROGRESS_IN_FLASH  - Save DFU progress in flash.
+ 
+
+// <i> Save DFU progress to flash so that it can be resumed if interrupted, instead of being restarted.
+// <i> Keep this setting disabled to maximize transfer speed and minimize flash wear.
+// <i> The init packet is always saved in flash, regardless of this setting.
+
+#ifndef NRF_DFU_SAVE_PROGRESS_IN_FLASH
+#define NRF_DFU_SAVE_PROGRESS_IN_FLASH 0
+#endif
+
+// </h> 
+//==========================================================
+
+// </h> 
+//==========================================================
 
 // </h> 
 //==========================================================
@@ -154,143 +1174,11 @@
 // <h> nRF_Drivers 
 
 //==========================================================
-// <e> APP_USBD_ENABLED - app_usbd - USB Device library
-//==========================================================
-#ifndef APP_USBD_ENABLED
-#define APP_USBD_ENABLED 1
-#endif
-// <s> APP_USBD_VID - Vendor ID
-
-// <i> Vendor ID ordered from USB IF: http://www.usb.org/developers/vendor/
-#ifndef APP_USBD_VID
-#define APP_USBD_VID 0x1915
-#endif
-
-// <s> APP_USBD_PID - Product ID
-
-// <i> Selected Product ID
-#ifndef APP_USBD_PID
-#define APP_USBD_PID 0x521F
-#endif
-
-// <o> APP_USBD_DEVICE_VER_MAJOR - Device version, major part  <0-99> 
-
-
-// <i> Device version, will be converted automatically to BCD notation. Use just decimal values.
-
-#ifndef APP_USBD_DEVICE_VER_MAJOR
-#define APP_USBD_DEVICE_VER_MAJOR 1
-#endif
-
-// <o> APP_USBD_DEVICE_VER_MINOR - Device version, minor part  <0-99> 
-
-
-// <i> Device version, will be converted automatically to BCD notation. Use just decimal values.
-
-#ifndef APP_USBD_DEVICE_VER_MINOR
-#define APP_USBD_DEVICE_VER_MINOR 0
-#endif
-
-// <e> APP_USBD_EVENT_QUEUE_ENABLE - Enable event queue
-
-// <i> This is the default configuration when all the events are placed into internal queue.
-// <i> Disable it when external queue is used like app_scheduler or if you wish to process all events inside interrupts.
-// <i> Processing all events from the interrupt level adds requirement not to call any functions that modifies the USBD library state from the context higher than USB interrupt context.
-// <i> Functions that modify USBD state are functions for sleep, wakeup, start, stop, enable and disable.
-//==========================================================
-#ifndef APP_USBD_EVENT_QUEUE_ENABLE
-#define APP_USBD_EVENT_QUEUE_ENABLE 0
-#endif
-// <o> APP_USBD_EVENT_QUEUE_SIZE - The size of event queue  <16-64> 
-
-
-// <i> The size of the queue for the events that would be processed in the main loop.
-
-#ifndef APP_USBD_EVENT_QUEUE_SIZE
-#define APP_USBD_EVENT_QUEUE_SIZE 32
-#endif
-
-// </e>
-
-// <q> APP_USBD_CONFIG_PROVIDE_SOF_TIMESTAMP  - Provide a function that generates timestamps for logs based on the current SOF
- 
-
-// <i> The function app_usbd_sof_timestamp_get will be implemented if the logger is enabled. 
-// <i> Use it when initializing the logger. 
-// <i> SOF processing will be always enabled when this configuration parameter is active. 
-// <i> Notice that this option is configured outside of APP_USBD_CONFIG_LOG_ENABLED. 
-// <i> This means that it will work even if the logging in this very module is disabled. 
-
-#ifndef APP_USBD_CONFIG_PROVIDE_SOF_TIMESTAMP
-#define APP_USBD_CONFIG_PROVIDE_SOF_TIMESTAMP 0
-#endif
-
-// <e> APP_USBD_CONFIG_LOG_ENABLED - Enable logging in the module
-//==========================================================
-#ifndef APP_USBD_CONFIG_LOG_ENABLED
-#define APP_USBD_CONFIG_LOG_ENABLED 0
-#endif
-// <o> APP_USBD_CONFIG_LOG_LEVEL  - Default Severity level
- 
-// <0=> Off 
-// <1=> Error 
-// <2=> Warning 
-// <3=> Info 
-// <4=> Debug 
-
-#ifndef APP_USBD_CONFIG_LOG_LEVEL
-#define APP_USBD_CONFIG_LOG_LEVEL 3
-#endif
-
-// <o> APP_USBD_CONFIG_INFO_COLOR  - ANSI escape code prefix.
- 
-// <0=> Default 
-// <1=> Black 
-// <2=> Red 
-// <3=> Green 
-// <4=> Yellow 
-// <5=> Blue 
-// <6=> Magenta 
-// <7=> Cyan 
-// <8=> White 
-
-#ifndef APP_USBD_CONFIG_INFO_COLOR
-#define APP_USBD_CONFIG_INFO_COLOR 0
-#endif
-
-// <o> APP_USBD_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
- 
-// <0=> Default 
-// <1=> Black 
-// <2=> Red 
-// <3=> Green 
-// <4=> Yellow 
-// <5=> Blue 
-// <6=> Magenta 
-// <7=> Cyan 
-// <8=> White 
-
-#ifndef APP_USBD_CONFIG_DEBUG_COLOR
-#define APP_USBD_CONFIG_DEBUG_COLOR 0
-#endif
-
-// </e>
-
-// </e>
-
-// <e> CLOCK_ENABLED - nrf_drv_clock - CLOCK peripheral driver
+// <e> CLOCK_ENABLED - nrf_drv_clock - CLOCK peripheral driver - legacy layer
 //==========================================================
 #ifndef CLOCK_ENABLED
 #define CLOCK_ENABLED 1
 #endif
-// <o> CLOCK_CONFIG_XTAL_FREQ  - HF XTAL Frequency
- 
-// <0=> Default (64 MHz) 
-
-#ifndef CLOCK_CONFIG_XTAL_FREQ
-#define CLOCK_CONFIG_XTAL_FREQ 0
-#endif
-
 // <o> CLOCK_CONFIG_LF_SRC  - LF Clock Source
  
 // <0=> RC 
@@ -320,14 +1208,130 @@
 
 // </e>
 
-// <q> PERIPHERAL_RESOURCE_SHARING_ENABLED  - nrf_drv_common - Peripheral drivers common module
+// <e> NRFX_CLOCK_ENABLED - nrfx_clock - CLOCK peripheral driver
+//==========================================================
+#ifndef NRFX_CLOCK_ENABLED
+#define NRFX_CLOCK_ENABLED 1
+#endif
+// <o> NRFX_CLOCK_CONFIG_LF_SRC  - LF Clock Source
  
+// <0=> RC 
+// <1=> XTAL 
+// <2=> Synth 
 
-#ifndef PERIPHERAL_RESOURCE_SHARING_ENABLED
-#define PERIPHERAL_RESOURCE_SHARING_ENABLED 0
+#ifndef NRFX_CLOCK_CONFIG_LF_SRC
+#define NRFX_CLOCK_CONFIG_LF_SRC 1
 #endif
 
-// <e> POWER_ENABLED - nrf_drv_power - POWER peripheral driver
+// <o> NRFX_CLOCK_CONFIG_IRQ_PRIORITY  - Interrupt priority
+ 
+// <0=> 0 (highest) 
+// <1=> 1 
+// <2=> 2 
+// <3=> 3 
+// <4=> 4 
+// <5=> 5 
+// <6=> 6 
+// <7=> 7 
+
+#ifndef NRFX_CLOCK_CONFIG_IRQ_PRIORITY
+#define NRFX_CLOCK_CONFIG_IRQ_PRIORITY 7
+#endif
+
+// <e> NRFX_CLOCK_CONFIG_LOG_ENABLED - Enables logging in the module.
+//==========================================================
+#ifndef NRFX_CLOCK_CONFIG_LOG_ENABLED
+#define NRFX_CLOCK_CONFIG_LOG_ENABLED 0
+#endif
+// <o> NRFX_CLOCK_CONFIG_LOG_LEVEL  - Default Severity level
+ 
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef NRFX_CLOCK_CONFIG_LOG_LEVEL
+#define NRFX_CLOCK_CONFIG_LOG_LEVEL 3
+#endif
+
+// <o> NRFX_CLOCK_CONFIG_INFO_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef NRFX_CLOCK_CONFIG_INFO_COLOR
+#define NRFX_CLOCK_CONFIG_INFO_COLOR 0
+#endif
+
+// <o> NRFX_CLOCK_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef NRFX_CLOCK_CONFIG_DEBUG_COLOR
+#define NRFX_CLOCK_CONFIG_DEBUG_COLOR 0
+#endif
+
+// </e>
+
+// </e>
+
+// <e> NRFX_POWER_ENABLED - nrfx_power - POWER peripheral driver
+//==========================================================
+#ifndef NRFX_POWER_ENABLED
+#define NRFX_POWER_ENABLED 1
+#endif
+// <o> NRFX_POWER_CONFIG_IRQ_PRIORITY  - Interrupt priority
+ 
+// <0=> 0 (highest) 
+// <1=> 1 
+// <2=> 2 
+// <3=> 3 
+// <4=> 4 
+// <5=> 5 
+// <6=> 6 
+// <7=> 7 
+
+#ifndef NRFX_POWER_CONFIG_IRQ_PRIORITY
+#define NRFX_POWER_CONFIG_IRQ_PRIORITY 7
+#endif
+
+// <q> NRFX_POWER_CONFIG_DEFAULT_DCDCEN  - The default configuration of main DCDC regulator
+ 
+
+// <i> This settings means only that components for DCDC regulator are installed and it can be enabled.
+
+#ifndef NRFX_POWER_CONFIG_DEFAULT_DCDCEN
+#define NRFX_POWER_CONFIG_DEFAULT_DCDCEN 0
+#endif
+
+// <q> NRFX_POWER_CONFIG_DEFAULT_DCDCENHV  - The default configuration of High Voltage DCDC regulator
+ 
+
+// <i> This settings means only that components for DCDC regulator are installed and it can be enabled.
+
+#ifndef NRFX_POWER_CONFIG_DEFAULT_DCDCENHV
+#define NRFX_POWER_CONFIG_DEFAULT_DCDCENHV 0
+#endif
+
+// </e>
+
+// <e> POWER_ENABLED - nrf_drv_power - POWER peripheral driver - legacy layer
 //==========================================================
 #ifndef POWER_ENABLED
 #define POWER_ENABLED 1
@@ -369,49 +1373,6 @@
 
 // </e>
 
-// <e> RNG_ENABLED - nrf_drv_rng - RNG peripheral driver
-//==========================================================
-#ifndef RNG_ENABLED
-#define RNG_ENABLED 0
-#endif
-// <q> RNG_CONFIG_ERROR_CORRECTION  - Error correction
- 
-
-#ifndef RNG_CONFIG_ERROR_CORRECTION
-#define RNG_CONFIG_ERROR_CORRECTION 0
-#endif
-
-// <o> RNG_CONFIG_POOL_SIZE - Pool size 
-#ifndef RNG_CONFIG_POOL_SIZE
-#define RNG_CONFIG_POOL_SIZE 32
-#endif
-
-// <o> RNG_CONFIG_IRQ_PRIORITY  - Interrupt priority
- 
-
-// <i> Priorities 0,2 (nRF51) and 0,1,4,5 (nRF52) are reserved for SoftDevice
-// <0=> 0 (highest) 
-// <1=> 1 
-// <2=> 2 
-// <3=> 3 
-// <4=> 4 
-// <5=> 5 
-// <6=> 6 
-// <7=> 7 
-
-#ifndef RNG_CONFIG_IRQ_PRIORITY
-#define RNG_CONFIG_IRQ_PRIORITY 7
-#endif
-
-// </e>
-
-// <q> SYSTICK_ENABLED  - nrf_drv_systick - SysTick driver
- 
-
-#ifndef SYSTICK_ENABLED
-#define SYSTICK_ENABLED 1
-#endif
-
 // <e> USBD_ENABLED - nrf_drv_usbd - USB driver
 //==========================================================
 #ifndef USBD_ENABLED
@@ -434,13 +1395,13 @@
 #define USBD_CONFIG_IRQ_PRIORITY 7
 #endif
 
-// <o> NRF_DRV_USBD_DMASCHEDULER_MODE  - USBD SMA scheduler working scheme
+// <o> USBD_CONFIG_DMASCHEDULER_MODE  - USBD SMA scheduler working scheme
  
 // <0=> Prioritized access 
 // <1=> Round Robin 
 
-#ifndef NRF_DRV_USBD_DMASCHEDULER_MODE
-#define NRF_DRV_USBD_DMASCHEDULER_MODE 0
+#ifndef USBD_CONFIG_DMASCHEDULER_MODE
+#define USBD_CONFIG_DMASCHEDULER_MODE 0
 #endif
 
 // </e>
@@ -524,13 +1485,6 @@
 #define APP_TIMER_CONFIG_USE_SCHEDULER 1
 #endif
 
-// <q> APP_TIMER_WITH_PROFILER  - Enable app_timer profiling
- 
-
-#ifndef APP_TIMER_WITH_PROFILER
-#define APP_TIMER_WITH_PROFILER 0
-#endif
-
 // <q> APP_TIMER_KEEPS_RTC_ACTIVE  - Enable RTC always on
  
 
@@ -541,29 +1495,216 @@
 #define APP_TIMER_KEEPS_RTC_ACTIVE 0
 #endif
 
-// <o> APP_TIMER_CONFIG_SWI_NUMBER  - Configure SWI instance used.
+// <h> App Timer Legacy configuration - Legacy configuration.
+
+//==========================================================
+// <q> APP_TIMER_WITH_PROFILER  - Enable app_timer profiling
  
-// <0=> 0 
-// <1=> 1 
+
+#ifndef APP_TIMER_WITH_PROFILER
+#define APP_TIMER_WITH_PROFILER 0
+#endif
+
+// <q> APP_TIMER_CONFIG_SWI_NUMBER  - Configure SWI instance used.
+ 
 
 #ifndef APP_TIMER_CONFIG_SWI_NUMBER
 #define APP_TIMER_CONFIG_SWI_NUMBER 0
 #endif
 
+// </h> 
+//==========================================================
+
 // </e>
 
-// <q> APP_USBD_CLASS_CDC_ACM_ENABLED  - app_usbd_cdc_acm - USB CDC ACM class
+// <q> APP_USBD_CDC_ACM_ENABLED  - app_usbd_cdc_acm - USB CDC ACM class
  
 
-#ifndef APP_USBD_CLASS_CDC_ACM_ENABLED
-#define APP_USBD_CLASS_CDC_ACM_ENABLED 1
+#ifndef APP_USBD_CDC_ACM_ENABLED
+#define APP_USBD_CDC_ACM_ENABLED 1
 #endif
+
+// <e> APP_USBD_ENABLED - app_usbd - USB Device library
+//==========================================================
+#ifndef APP_USBD_ENABLED
+#define APP_USBD_ENABLED 1
+#endif
+// <s> APP_USBD_VID - Vendor ID
+
+// <i> Vendor ID ordered from USB IF: http://www.usb.org/developers/vendor/
+#ifndef APP_USBD_VID
+#define APP_USBD_VID 0x1915
+#endif
+
+// <s> APP_USBD_PID - Product ID
+
+// <i> Selected Product ID
+#ifndef APP_USBD_PID
+#define APP_USBD_PID 0x521F
+#endif
+
+// <o> APP_USBD_DEVICE_VER_MAJOR - Device version, major part  <0-99> 
+
+
+// <i> Device version, will be converted automatically to BCD notation. Use just decimal values.
+
+#ifndef APP_USBD_DEVICE_VER_MAJOR
+#define APP_USBD_DEVICE_VER_MAJOR 1
+#endif
+
+// <o> APP_USBD_DEVICE_VER_MINOR - Device version, minor part  <0-99> 
+
+
+// <i> Device version, will be converted automatically to BCD notation. Use just decimal values.
+
+#ifndef APP_USBD_DEVICE_VER_MINOR
+#define APP_USBD_DEVICE_VER_MINOR 0
+#endif
+
+// <q> APP_USBD_CONFIG_SELF_POWERED  - Self powered 
+ 
+
+#ifndef APP_USBD_CONFIG_SELF_POWERED
+#define APP_USBD_CONFIG_SELF_POWERED 1
+#endif
+
+// <o> APP_USBD_CONFIG_MAX_POWER - MaxPower field in configuration descriptor in milliamps  <0-500> 
+
+
+#ifndef APP_USBD_CONFIG_MAX_POWER
+#define APP_USBD_CONFIG_MAX_POWER 500
+#endif
+
+// <q> APP_USBD_CONFIG_POWER_EVENTS_PROCESS  - Process power events
+ 
+
+// <i> Enable processing power events in USB event handler.
+
+#ifndef APP_USBD_CONFIG_POWER_EVENTS_PROCESS
+#define APP_USBD_CONFIG_POWER_EVENTS_PROCESS 1
+#endif
+
+// <e> APP_USBD_CONFIG_EVENT_QUEUE_ENABLE - Enable event queue
+
+// <i> This is the default configuration when all the events are placed into internal queue.
+// <i> Disable it when external queue is used like app_scheduler or if you wish to process all events inside interrupts.
+// <i> Processing all events from the interrupt level adds requirement not to call any functions that modifies the USBD library state from the context higher than USB interrupt context.
+// <i> Functions that modify USBD state are functions for sleep, wakeup, start, stop, enable and disable.
+//==========================================================
+#ifndef APP_USBD_CONFIG_EVENT_QUEUE_ENABLE
+#define APP_USBD_CONFIG_EVENT_QUEUE_ENABLE 0
+#endif
+// <o> APP_USBD_CONFIG_EVENT_QUEUE_SIZE - The size of event queue  <16-64> 
+
+
+// <i> The size of the queue for the events that would be processed in the main loop.
+
+#ifndef APP_USBD_CONFIG_EVENT_QUEUE_SIZE
+#define APP_USBD_CONFIG_EVENT_QUEUE_SIZE 32
+#endif
+
+// <o> APP_USBD_CONFIG_SOF_HANDLING_MODE  - Change SOF events handling mode.
+ 
+
+// <i> Normal queue   - SOF events are pushed normally into event queue.
+// <i> Compress queue - SOF events are counted and binded with other events or executed when queue is empty.
+// <i>                  This prevents queue from filling with SOF events.
+// <i> Interrupt      - SOF events are processed in interrupt.
+// <0=> Normal queue 
+// <1=> Compress queue 
+// <2=> Interrupt 
+
+#ifndef APP_USBD_CONFIG_SOF_HANDLING_MODE
+#define APP_USBD_CONFIG_SOF_HANDLING_MODE 1
+#endif
+
+// </e>
+
+// <q> APP_USBD_CONFIG_SOF_TIMESTAMP_PROVIDE  - Provide a function that generates timestamps for logs based on the current SOF
+ 
+
+// <i> The function app_usbd_sof_timestamp_get will be implemented if the logger is enabled. 
+// <i> Use it when initializing the logger. 
+// <i> SOF processing will be always enabled when this configuration parameter is active. 
+// <i> Notice that this option is configured outside of APP_USBD_CONFIG_LOG_ENABLED. 
+// <i> This means that it will work even if the logging in this very module is disabled. 
+
+#ifndef APP_USBD_CONFIG_SOF_TIMESTAMP_PROVIDE
+#define APP_USBD_CONFIG_SOF_TIMESTAMP_PROVIDE 0
+#endif
+
+// <e> APP_USBD_CONFIG_LOG_ENABLED - Enable logging in the module
+//==========================================================
+#ifndef APP_USBD_CONFIG_LOG_ENABLED
+#define APP_USBD_CONFIG_LOG_ENABLED 0
+#endif
+// <o> APP_USBD_CONFIG_LOG_LEVEL  - Default Severity level
+ 
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef APP_USBD_CONFIG_LOG_LEVEL
+#define APP_USBD_CONFIG_LOG_LEVEL 3
+#endif
+
+// <o> APP_USBD_CONFIG_INFO_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef APP_USBD_CONFIG_INFO_COLOR
+#define APP_USBD_CONFIG_INFO_COLOR 0
+#endif
+
+// <o> APP_USBD_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef APP_USBD_CONFIG_DEBUG_COLOR
+#define APP_USBD_CONFIG_DEBUG_COLOR 0
+#endif
+
+// </e>
+
+// </e>
 
 // <q> CRC32_ENABLED  - crc32 - CRC32 calculation routines
  
 
 #ifndef CRC32_ENABLED
 #define CRC32_ENABLED 1
+#endif
+
+// <q> LED_SOFTBLINK_ENABLED  - led_softblink - led_softblink module
+ 
+
+#ifndef LED_SOFTBLINK_ENABLED
+#define LED_SOFTBLINK_ENABLED 1
+#endif
+
+// <q> LOW_POWER_PWM_ENABLED  - low_power_pwm - low_power_pwm module
+ 
+
+#ifndef LOW_POWER_PWM_ENABLED
+#define LOW_POWER_PWM_ENABLED 1
 #endif
 
 // <e> MEM_MANAGER_ENABLED - mem_manager - Dynamic memory allocator
@@ -774,6 +1915,13 @@
 #define NRF_BALLOC_CONFIG_DATA_TRASHING_CHECK_ENABLED 0
 #endif
 
+// <q> NRF_BALLOC_CLI_CMDS  - Enable CLI commands specific to the module
+ 
+
+#ifndef NRF_BALLOC_CLI_CMDS
+#define NRF_BALLOC_CLI_CMDS 0
+#endif
+
 // </e>
 
 // </e>
@@ -790,18 +1938,36 @@
 #ifndef NRF_FSTORAGE_ENABLED
 #define NRF_FSTORAGE_ENABLED 1
 #endif
-// <h> nrf_fstorage_sd - Implementation using the SoftDevice.
+// <h> nrf_fstorage - Common settings
 
-// <i> Configuration options for the fstorage implementation using the SoftDevice.
+// <i> Common settings to all fstorage implementations
 //==========================================================
-// <o> NRF_FSTORAGE_SD_QUEUE_SIZE - Size of the internal queue of operations. 
+// <q> NRF_FSTORAGE_PARAM_CHECK_DISABLED  - Disable user input validation
+ 
+
+// <i> If selected, use ASSERT to validate user input.
+// <i> This effectively removes user input validation in production code.
+// <i> Recommended setting: OFF, only enable this setting if size is a major concern.
+
+#ifndef NRF_FSTORAGE_PARAM_CHECK_DISABLED
+#define NRF_FSTORAGE_PARAM_CHECK_DISABLED 0
+#endif
+
+// </h> 
+//==========================================================
+
+// <h> nrf_fstorage_sd - Implementation using the SoftDevice
+
+// <i> Configuration options for the fstorage implementation using the SoftDevice
+//==========================================================
+// <o> NRF_FSTORAGE_SD_QUEUE_SIZE - Size of the internal queue of operations 
 // <i> Increase this value if API calls frequently return the error @ref NRF_ERROR_NO_MEM.
 
 #ifndef NRF_FSTORAGE_SD_QUEUE_SIZE
 #define NRF_FSTORAGE_SD_QUEUE_SIZE 4
 #endif
 
-// <o> NRF_FSTORAGE_SD_MAX_RETRIES - Maximum number of attempts at executing an operation when the SoftDevice is busy. 
+// <o> NRF_FSTORAGE_SD_MAX_RETRIES - Maximum number of attempts at executing an operation when the SoftDevice is busy 
 // <i> Increase this value if events frequently return the @ref NRF_ERROR_TIMEOUT error.
 // <i> The SoftDevice might fail to schedule flash access due to high BLE activity.
 
@@ -809,7 +1975,7 @@
 #define NRF_FSTORAGE_SD_MAX_RETRIES 8
 #endif
 
-// <o> NRF_FSTORAGE_SD_MAX_WRITE_SIZE - Maximum number of bytes to be written to flash in a single operation. 
+// <o> NRF_FSTORAGE_SD_MAX_WRITE_SIZE - Maximum number of bytes to be written to flash in a single operation 
 // <i> This value must be a multiple of four.
 // <i> Lowering this value can increase the chances of the SoftDevice being able to execute flash operations in between radio activity.
 // <i> This value is bound by the maximum number of bytes that can be written to flash in a single call to @ref sd_flash_write.
@@ -831,18 +1997,25 @@
 #define NRF_MEMOBJ_ENABLED 1
 #endif
 
-// <q> NRF_QUEUE_ENABLED  - nrf_queue - Queue module
- 
-
+// <e> NRF_QUEUE_ENABLED - nrf_queue - Queue module
+//==========================================================
 #ifndef NRF_QUEUE_ENABLED
 #define NRF_QUEUE_ENABLED 0
 #endif
-
-// <q> NRF_SECTION_ITER_ENABLED  - nrf_section_iter - Section iterator
+// <q> NRF_QUEUE_CLI_CMDS  - Enable CLI commands specific to the module
  
 
-#ifndef NRF_SECTION_ITER_ENABLED
-#define NRF_SECTION_ITER_ENABLED 1
+#ifndef NRF_QUEUE_CLI_CMDS
+#define NRF_QUEUE_CLI_CMDS 0
+#endif
+
+// </e>
+
+// <q> NRF_SORTLIST_ENABLED  - nrf_sortlist - Sorted list
+ 
+
+#ifndef NRF_SORTLIST_ENABLED
+#define NRF_SORTLIST_ENABLED 1
 #endif
 
 // <q> NRF_STRERROR_ENABLED  - nrf_strerror - Library for converting error code to string.
@@ -865,22 +2038,12 @@
 // <h> nRF_Log 
 
 //==========================================================
-// <e> NRF_LOG_BACKEND_RTT_ENABLED - nrf_log_backend_rtt - Log RTT backend
-//==========================================================
-#ifndef NRF_LOG_BACKEND_RTT_ENABLED
-#define NRF_LOG_BACKEND_RTT_ENABLED 1
-#endif
-// <o> NRF_LOG_BACKEND_RTT_TEMP_BUFFER_SIZE - Size of buffer for partially processed strings. 
-// <i> Size of the buffer is a trade-off between RAM usage and processing.
-// <i> if buffer is smaller then strings will often be fragmented.
-// <i> It is recommended to use size which will fit typical log and only the
-// <i> longer one will be fragmented.
+// <q> NRF_LOG_STR_FORMATTER_TIMESTAMP_FORMAT_ENABLED  - nrf_log_str_formatter - Log string formatter
+ 
 
-#ifndef NRF_LOG_BACKEND_RTT_TEMP_BUFFER_SIZE
-#define NRF_LOG_BACKEND_RTT_TEMP_BUFFER_SIZE 64
+#ifndef NRF_LOG_STR_FORMATTER_TIMESTAMP_FORMAT_ENABLED
+#define NRF_LOG_STR_FORMATTER_TIMESTAMP_FORMAT_ENABLED 1
 #endif
-
-// </e>
 
 // <h> nrf_log - Logger
 
@@ -888,7 +2051,7 @@
 // <e> NRF_LOG_ENABLED - Logging module for nRF5 SDK
 //==========================================================
 #ifndef NRF_LOG_ENABLED
-#define NRF_LOG_ENABLED 1
+#define NRF_LOG_ENABLED 0
 #endif
 // <e> NRF_LOG_USES_COLORS - If enabled then ANSI escape code for colors is prefixed to every string
 //==========================================================
@@ -954,7 +2117,7 @@
 // <4=> Debug 
 
 #ifndef NRF_LOG_DEFAULT_LEVEL
-#define NRF_LOG_DEFAULT_LEVEL 4
+#define NRF_LOG_DEFAULT_LEVEL 3
 #endif
 
 // <q> NRF_LOG_DEFERRED  - Enable deffered logger.
@@ -963,7 +2126,7 @@
 // <i> Log data is buffered and can be processed in idle.
 
 #ifndef NRF_LOG_DEFERRED
-#define NRF_LOG_DEFERRED 0
+#define NRF_LOG_DEFERRED 1
 #endif
 
 // <o> NRF_LOG_BUFSIZE  - Size of the buffer for storing logs (in bytes).
@@ -994,14 +2157,19 @@
 #define NRF_LOG_ALLOW_OVERFLOW 1
 #endif
 
-// <q> NRF_LOG_USES_TIMESTAMP  - Enable timestamping
- 
+// <e> NRF_LOG_USES_TIMESTAMP - Enable timestamping
 
 // <i> Function for getting the timestamp is provided by the user
-
+//==========================================================
 #ifndef NRF_LOG_USES_TIMESTAMP
 #define NRF_LOG_USES_TIMESTAMP 0
 #endif
+// <o> NRF_LOG_TIMESTAMP_DEFAULT_FREQUENCY - Default frequency of the timestamp (in Hz) 
+#ifndef NRF_LOG_TIMESTAMP_DEFAULT_FREQUENCY
+#define NRF_LOG_TIMESTAMP_DEFAULT_FREQUENCY 32768
+#endif
+
+// </e>
 
 // <q> NRF_LOG_FILTERS_ENABLED  - Enable dynamic filtering of logs.
  
@@ -1261,57 +2429,6 @@
 
 // </e>
 
-// <e> COMMON_CONFIG_LOG_ENABLED - Enables logging in the module.
-//==========================================================
-#ifndef COMMON_CONFIG_LOG_ENABLED
-#define COMMON_CONFIG_LOG_ENABLED 0
-#endif
-// <o> COMMON_CONFIG_LOG_LEVEL  - Default Severity level
- 
-// <0=> Off 
-// <1=> Error 
-// <2=> Warning 
-// <3=> Info 
-// <4=> Debug 
-
-#ifndef COMMON_CONFIG_LOG_LEVEL
-#define COMMON_CONFIG_LOG_LEVEL 3
-#endif
-
-// <o> COMMON_CONFIG_INFO_COLOR  - ANSI escape code prefix.
- 
-// <0=> Default 
-// <1=> Black 
-// <2=> Red 
-// <3=> Green 
-// <4=> Yellow 
-// <5=> Blue 
-// <6=> Magenta 
-// <7=> Cyan 
-// <8=> White 
-
-#ifndef COMMON_CONFIG_INFO_COLOR
-#define COMMON_CONFIG_INFO_COLOR 0
-#endif
-
-// <o> COMMON_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
- 
-// <0=> Default 
-// <1=> Black 
-// <2=> Red 
-// <3=> Green 
-// <4=> Yellow 
-// <5=> Blue 
-// <6=> Magenta 
-// <7=> Cyan 
-// <8=> White 
-
-#ifndef COMMON_CONFIG_DEBUG_COLOR
-#define COMMON_CONFIG_DEBUG_COLOR 0
-#endif
-
-// </e>
-
 // <e> COMP_CONFIG_LOG_ENABLED - Enables logging in the module.
 //==========================================================
 #ifndef COMP_CONFIG_LOG_ENABLED
@@ -1410,57 +2527,6 @@
 
 #ifndef GPIOTE_CONFIG_DEBUG_COLOR
 #define GPIOTE_CONFIG_DEBUG_COLOR 0
-#endif
-
-// </e>
-
-// <e> I2S_CONFIG_LOG_ENABLED - Enables logging in the module.
-//==========================================================
-#ifndef I2S_CONFIG_LOG_ENABLED
-#define I2S_CONFIG_LOG_ENABLED 0
-#endif
-// <o> I2S_CONFIG_LOG_LEVEL  - Default Severity level
- 
-// <0=> Off 
-// <1=> Error 
-// <2=> Warning 
-// <3=> Info 
-// <4=> Debug 
-
-#ifndef I2S_CONFIG_LOG_LEVEL
-#define I2S_CONFIG_LOG_LEVEL 3
-#endif
-
-// <o> I2S_CONFIG_INFO_COLOR  - ANSI escape code prefix.
- 
-// <0=> Default 
-// <1=> Black 
-// <2=> Red 
-// <3=> Green 
-// <4=> Yellow 
-// <5=> Blue 
-// <6=> Magenta 
-// <7=> Cyan 
-// <8=> White 
-
-#ifndef I2S_CONFIG_INFO_COLOR
-#define I2S_CONFIG_INFO_COLOR 0
-#endif
-
-// <o> I2S_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
- 
-// <0=> Default 
-// <1=> Black 
-// <2=> Red 
-// <3=> Green 
-// <4=> Yellow 
-// <5=> Blue 
-// <6=> Magenta 
-// <7=> Cyan 
-// <8=> White 
-
-#ifndef I2S_CONFIG_DEBUG_COLOR
-#define I2S_CONFIG_DEBUG_COLOR 0
 #endif
 
 // </e>
@@ -1982,57 +3048,6 @@
 
 // </e>
 
-// <e> SWI_CONFIG_LOG_ENABLED - Enables logging in the module.
-//==========================================================
-#ifndef SWI_CONFIG_LOG_ENABLED
-#define SWI_CONFIG_LOG_ENABLED 0
-#endif
-// <o> SWI_CONFIG_LOG_LEVEL  - Default Severity level
- 
-// <0=> Off 
-// <1=> Error 
-// <2=> Warning 
-// <3=> Info 
-// <4=> Debug 
-
-#ifndef SWI_CONFIG_LOG_LEVEL
-#define SWI_CONFIG_LOG_LEVEL 3
-#endif
-
-// <o> SWI_CONFIG_INFO_COLOR  - ANSI escape code prefix.
- 
-// <0=> Default 
-// <1=> Black 
-// <2=> Red 
-// <3=> Green 
-// <4=> Yellow 
-// <5=> Blue 
-// <6=> Magenta 
-// <7=> Cyan 
-// <8=> White 
-
-#ifndef SWI_CONFIG_INFO_COLOR
-#define SWI_CONFIG_INFO_COLOR 0
-#endif
-
-// <o> SWI_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
- 
-// <0=> Default 
-// <1=> Black 
-// <2=> Red 
-// <3=> Green 
-// <4=> Yellow 
-// <5=> Blue 
-// <6=> Magenta 
-// <7=> Cyan 
-// <8=> White 
-
-#ifndef SWI_CONFIG_DEBUG_COLOR
-#define SWI_CONFIG_DEBUG_COLOR 0
-#endif
-
-// </e>
-
 // <e> TIMER_CONFIG_LOG_ENABLED - Enables logging in the module.
 //==========================================================
 #ifndef TIMER_CONFIG_LOG_ENABLED
@@ -2345,6 +3360,73 @@
 // <h> nrf_log in nRF_Libraries 
 
 //==========================================================
+// <e> APP_TIMER_CONFIG_LOG_ENABLED - Enables logging in the module.
+//==========================================================
+#ifndef APP_TIMER_CONFIG_LOG_ENABLED
+#define APP_TIMER_CONFIG_LOG_ENABLED 0
+#endif
+// <o> APP_TIMER_CONFIG_LOG_LEVEL  - Default Severity level
+ 
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef APP_TIMER_CONFIG_LOG_LEVEL
+#define APP_TIMER_CONFIG_LOG_LEVEL 3
+#endif
+
+// <o> APP_TIMER_CONFIG_INITIAL_LOG_LEVEL  - Initial severity level if dynamic filtering is enabled.
+ 
+
+// <i> If module generates a lot of logs, initial log level can
+// <i> be decreased to prevent flooding. Severity level can be
+// <i> increased on instance basis.
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef APP_TIMER_CONFIG_INITIAL_LOG_LEVEL
+#define APP_TIMER_CONFIG_INITIAL_LOG_LEVEL 3
+#endif
+
+// <o> APP_TIMER_CONFIG_INFO_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef APP_TIMER_CONFIG_INFO_COLOR
+#define APP_TIMER_CONFIG_INFO_COLOR 0
+#endif
+
+// <o> APP_TIMER_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef APP_TIMER_CONFIG_DEBUG_COLOR
+#define APP_TIMER_CONFIG_DEBUG_COLOR 0
+#endif
+
+// </e>
+
 // <e> APP_USBD_CDC_ACM_CONFIG_LOG_ENABLED - Enables logging in the module.
 //==========================================================
 #ifndef APP_USBD_CDC_ACM_CONFIG_LOG_ENABLED
@@ -2396,6 +3478,57 @@
 
 // </e>
 
+// <e> APP_USBD_DUMMY_CONFIG_LOG_ENABLED - Enables logging in the module.
+//==========================================================
+#ifndef APP_USBD_DUMMY_CONFIG_LOG_ENABLED
+#define APP_USBD_DUMMY_CONFIG_LOG_ENABLED 0
+#endif
+// <o> APP_USBD_DUMMY_CONFIG_LOG_LEVEL  - Default Severity level
+ 
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef APP_USBD_DUMMY_CONFIG_LOG_LEVEL
+#define APP_USBD_DUMMY_CONFIG_LOG_LEVEL 3
+#endif
+
+// <o> APP_USBD_DUMMY_CONFIG_INFO_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef APP_USBD_DUMMY_CONFIG_INFO_COLOR
+#define APP_USBD_DUMMY_CONFIG_INFO_COLOR 0
+#endif
+
+// <o> APP_USBD_DUMMY_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef APP_USBD_DUMMY_CONFIG_DEBUG_COLOR
+#define APP_USBD_DUMMY_CONFIG_DEBUG_COLOR 0
+#endif
+
+// </e>
+
 // <e> APP_USBD_MSC_CONFIG_LOG_ENABLED - Enables logging in the module.
 //==========================================================
 #ifndef APP_USBD_MSC_CONFIG_LOG_ENABLED
@@ -2410,7 +3543,7 @@
 // <4=> Debug 
 
 #ifndef APP_USBD_MSC_CONFIG_LOG_LEVEL
-#define APP_USBD_MSC_CONFIG_LOG_LEVEL 4
+#define APP_USBD_MSC_CONFIG_LOG_LEVEL 3
 #endif
 
 // <o> APP_USBD_MSC_CONFIG_INFO_COLOR  - ANSI escape code prefix.
@@ -2447,6 +3580,120 @@
 
 // </e>
 
+// <e> APP_USBD_NRF_DFU_TRIGGER_CONFIG_LOG_ENABLED - Enables logging in the module.
+//==========================================================
+#ifndef APP_USBD_NRF_DFU_TRIGGER_CONFIG_LOG_ENABLED
+#define APP_USBD_NRF_DFU_TRIGGER_CONFIG_LOG_ENABLED 0
+#endif
+// <o> APP_USBD_NRF_DFU_TRIGGER_CONFIG_LOG_LEVEL  - Default Severity level
+ 
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef APP_USBD_NRF_DFU_TRIGGER_CONFIG_LOG_LEVEL
+#define APP_USBD_NRF_DFU_TRIGGER_CONFIG_LOG_LEVEL 3
+#endif
+
+// <o> APP_USBD_NRF_DFU_TRIGGER_CONFIG_INFO_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef APP_USBD_NRF_DFU_TRIGGER_CONFIG_INFO_COLOR
+#define APP_USBD_NRF_DFU_TRIGGER_CONFIG_INFO_COLOR 0
+#endif
+
+// <o> APP_USBD_NRF_DFU_TRIGGER_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef APP_USBD_NRF_DFU_TRIGGER_CONFIG_DEBUG_COLOR
+#define APP_USBD_NRF_DFU_TRIGGER_CONFIG_DEBUG_COLOR 0
+#endif
+
+// </e>
+
+// <e> NRF_ATFIFO_CONFIG_LOG_ENABLED - Enables logging in the module.
+//==========================================================
+#ifndef NRF_ATFIFO_CONFIG_LOG_ENABLED
+#define NRF_ATFIFO_CONFIG_LOG_ENABLED 0
+#endif
+// <o> NRF_ATFIFO_CONFIG_LOG_LEVEL  - Default Severity level
+ 
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef NRF_ATFIFO_CONFIG_LOG_LEVEL
+#define NRF_ATFIFO_CONFIG_LOG_LEVEL 3
+#endif
+
+// <o> NRF_ATFIFO_CONFIG_LOG_INIT_FILTER_LEVEL  - Initial severity level if dynamic filtering is enabled
+ 
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef NRF_ATFIFO_CONFIG_LOG_INIT_FILTER_LEVEL
+#define NRF_ATFIFO_CONFIG_LOG_INIT_FILTER_LEVEL 3
+#endif
+
+// <o> NRF_ATFIFO_CONFIG_INFO_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef NRF_ATFIFO_CONFIG_INFO_COLOR
+#define NRF_ATFIFO_CONFIG_INFO_COLOR 0
+#endif
+
+// <o> NRF_ATFIFO_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef NRF_ATFIFO_CONFIG_DEBUG_COLOR
+#define NRF_ATFIFO_CONFIG_DEBUG_COLOR 0
+#endif
+
+// </e>
+
 // <e> NRF_BALLOC_CONFIG_LOG_ENABLED - Enables logging in the module.
 //==========================================================
 #ifndef NRF_BALLOC_CONFIG_LOG_ENABLED
@@ -2462,6 +3709,22 @@
 
 #ifndef NRF_BALLOC_CONFIG_LOG_LEVEL
 #define NRF_BALLOC_CONFIG_LOG_LEVEL 3
+#endif
+
+// <o> NRF_BALLOC_CONFIG_INITIAL_LOG_LEVEL  - Initial severity level if dynamic filtering is enabled.
+ 
+
+// <i> If module generates a lot of logs, initial log level can
+// <i> be decreased to prevent flooding. Severity level can be
+// <i> increased on instance basis.
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef NRF_BALLOC_CONFIG_INITIAL_LOG_LEVEL
+#define NRF_BALLOC_CONFIG_INITIAL_LOG_LEVEL 3
 #endif
 
 // <o> NRF_BALLOC_CONFIG_INFO_COLOR  - ANSI escape code prefix.
@@ -2549,6 +3812,57 @@
 
 // </e>
 
+// <e> NRF_CLI_LIBUARTE_CONFIG_LOG_ENABLED - Enables logging in the module.
+//==========================================================
+#ifndef NRF_CLI_LIBUARTE_CONFIG_LOG_ENABLED
+#define NRF_CLI_LIBUARTE_CONFIG_LOG_ENABLED 0
+#endif
+// <o> NRF_CLI_LIBUARTE_CONFIG_LOG_LEVEL  - Default Severity level
+ 
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef NRF_CLI_LIBUARTE_CONFIG_LOG_LEVEL
+#define NRF_CLI_LIBUARTE_CONFIG_LOG_LEVEL 3
+#endif
+
+// <o> NRF_CLI_LIBUARTE_CONFIG_INFO_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef NRF_CLI_LIBUARTE_CONFIG_INFO_COLOR
+#define NRF_CLI_LIBUARTE_CONFIG_INFO_COLOR 0
+#endif
+
+// <o> NRF_CLI_LIBUARTE_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef NRF_CLI_LIBUARTE_CONFIG_DEBUG_COLOR
+#define NRF_CLI_LIBUARTE_CONFIG_DEBUG_COLOR 0
+#endif
+
+// </e>
+
 // <e> NRF_CLI_UART_CONFIG_LOG_ENABLED - Enables logging in the module.
 //==========================================================
 #ifndef NRF_CLI_UART_CONFIG_LOG_ENABLED
@@ -2596,6 +3910,57 @@
 
 #ifndef NRF_CLI_UART_CONFIG_DEBUG_COLOR
 #define NRF_CLI_UART_CONFIG_DEBUG_COLOR 0
+#endif
+
+// </e>
+
+// <e> NRF_LIBUARTE_CONFIG_LOG_ENABLED - Enables logging in the module.
+//==========================================================
+#ifndef NRF_LIBUARTE_CONFIG_LOG_ENABLED
+#define NRF_LIBUARTE_CONFIG_LOG_ENABLED 0
+#endif
+// <o> NRF_LIBUARTE_CONFIG_LOG_LEVEL  - Default Severity level
+ 
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef NRF_LIBUARTE_CONFIG_LOG_LEVEL
+#define NRF_LIBUARTE_CONFIG_LOG_LEVEL 3
+#endif
+
+// <o> NRF_LIBUARTE_CONFIG_INFO_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef NRF_LIBUARTE_CONFIG_INFO_COLOR
+#define NRF_LIBUARTE_CONFIG_INFO_COLOR 0
+#endif
+
+// <o> NRF_LIBUARTE_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef NRF_LIBUARTE_CONFIG_DEBUG_COLOR
+#define NRF_LIBUARTE_CONFIG_DEBUG_COLOR 0
 #endif
 
 // </e>
@@ -2698,6 +4063,69 @@
 
 #ifndef NRF_PWR_MGMT_CONFIG_DEBUG_COLOR
 #define NRF_PWR_MGMT_CONFIG_DEBUG_COLOR 0
+#endif
+
+// </e>
+
+// <e> NRF_QUEUE_CONFIG_LOG_ENABLED - Enables logging in the module.
+//==========================================================
+#ifndef NRF_QUEUE_CONFIG_LOG_ENABLED
+#define NRF_QUEUE_CONFIG_LOG_ENABLED 0
+#endif
+// <o> NRF_QUEUE_CONFIG_LOG_LEVEL  - Default Severity level
+ 
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef NRF_QUEUE_CONFIG_LOG_LEVEL
+#define NRF_QUEUE_CONFIG_LOG_LEVEL 3
+#endif
+
+// <o> NRF_QUEUE_CONFIG_LOG_INIT_FILTER_LEVEL  - Initial severity level if dynamic filtering is enabled
+ 
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef NRF_QUEUE_CONFIG_LOG_INIT_FILTER_LEVEL
+#define NRF_QUEUE_CONFIG_LOG_INIT_FILTER_LEVEL 3
+#endif
+
+// <o> NRF_QUEUE_CONFIG_INFO_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef NRF_QUEUE_CONFIG_INFO_COLOR
+#define NRF_QUEUE_CONFIG_INFO_COLOR 0
+#endif
+
+// <o> NRF_QUEUE_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef NRF_QUEUE_CONFIG_DEBUG_COLOR
+#define NRF_QUEUE_CONFIG_DEBUG_COLOR 0
 #endif
 
 // </e>
@@ -2807,7 +4235,7 @@
 // <e> NRF_SDH_LOG_ENABLED - Enable logging in SoftDevice handler module.
 //==========================================================
 #ifndef NRF_SDH_LOG_ENABLED
-#define NRF_SDH_LOG_ENABLED 1
+#define NRF_SDH_LOG_ENABLED 0
 #endif
 // <o> NRF_SDH_LOG_LEVEL  - Default Severity level
  
@@ -2858,7 +4286,7 @@
 // <e> NRF_SDH_SOC_LOG_ENABLED - Enable logging in SoftDevice handler (SoC) module.
 //==========================================================
 #ifndef NRF_SDH_SOC_LOG_ENABLED
-#define NRF_SDH_SOC_LOG_ENABLED 1
+#define NRF_SDH_SOC_LOG_ENABLED 0
 #endif
 // <o> NRF_SDH_SOC_LOG_LEVEL  - Default Severity level
  
@@ -2957,290 +4385,137 @@
 
 // </e>
 
-// </h> 
+// <e> NRF_TWI_SENSOR_CONFIG_LOG_ENABLED - Enables logging in the module.
 //==========================================================
-
-// </h> 
-//==========================================================
-
-// </h> 
-//==========================================================
-
-// </h> 
-//==========================================================
-
-// <h> nRF_Segger_RTT 
-
-//==========================================================
-// <h> segger_rtt - SEGGER RTT
-
-//==========================================================
-// <o> SEGGER_RTT_CONFIG_BUFFER_SIZE_UP - Size of upstream buffer. 
-// <i> Note that either @ref NRF_LOG_BACKEND_RTT_OUTPUT_BUFFER_SIZE
-// <i> or this value is actually used. It depends on which one is bigger.
-
-#ifndef SEGGER_RTT_CONFIG_BUFFER_SIZE_UP
-#define SEGGER_RTT_CONFIG_BUFFER_SIZE_UP 8192
+#ifndef NRF_TWI_SENSOR_CONFIG_LOG_ENABLED
+#define NRF_TWI_SENSOR_CONFIG_LOG_ENABLED 0
 #endif
-
-// <o> SEGGER_RTT_CONFIG_MAX_NUM_UP_BUFFERS - Size of upstream buffer. 
-#ifndef SEGGER_RTT_CONFIG_MAX_NUM_UP_BUFFERS
-#define SEGGER_RTT_CONFIG_MAX_NUM_UP_BUFFERS 2
-#endif
-
-// <o> SEGGER_RTT_CONFIG_BUFFER_SIZE_DOWN - Size of upstream buffer. 
-#ifndef SEGGER_RTT_CONFIG_BUFFER_SIZE_DOWN
-#define SEGGER_RTT_CONFIG_BUFFER_SIZE_DOWN 16
-#endif
-
-// <o> SEGGER_RTT_CONFIG_MAX_NUM_DOWN_BUFFERS - Size of upstream buffer. 
-#ifndef SEGGER_RTT_CONFIG_MAX_NUM_DOWN_BUFFERS
-#define SEGGER_RTT_CONFIG_MAX_NUM_DOWN_BUFFERS 2
-#endif
-
-// <o> SEGGER_RTT_CONFIG_DEFAULT_MODE  - RTT behavior if the buffer is full.
+// <o> NRF_TWI_SENSOR_CONFIG_LOG_LEVEL  - Default Severity level
  
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
 
-// <i> The following modes are supported:
-// <i> - SKIP  - Do not block, output nothing.
-// <i> - TRIM  - Do not block, output as much as fits.
-// <i> - BLOCK - Wait until there is space in the buffer.
-// <0=> SKIP 
-// <1=> TRIM 
-// <2=> BLOCK_IF_FIFO_FULL 
-
-#ifndef SEGGER_RTT_CONFIG_DEFAULT_MODE
-#define SEGGER_RTT_CONFIG_DEFAULT_MODE 0
+#ifndef NRF_TWI_SENSOR_CONFIG_LOG_LEVEL
+#define NRF_TWI_SENSOR_CONFIG_LOG_LEVEL 3
 #endif
 
-// </h> 
-//==========================================================
-
-// </h> 
-//==========================================================
-
-// <h> nRF_SoftDevice 
-
-//==========================================================
-// <e> NRF_SDH_ENABLED - nrf_sdh - SoftDevice handler
-//==========================================================
-#ifndef NRF_SDH_ENABLED
-#define NRF_SDH_ENABLED 1
-#endif
-// <h> Dispatch model 
-
-// <i> This setting configures how Stack events are dispatched to the application.
-//==========================================================
-// <o> NRF_SDH_DISPATCH_MODEL
+// <o> NRF_TWI_SENSOR_CONFIG_INFO_COLOR  - ANSI escape code prefix.
  
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
 
-// <i> NRF_SDH_DISPATCH_MODEL_INTERRUPT: SoftDevice events are passed to the application from the interrupt context.
-// <i> NRF_SDH_DISPATCH_MODEL_APPSH: SoftDevice events are scheduled using @ref app_scheduler.
-// <i> NRF_SDH_DISPATCH_MODEL_POLLING: SoftDevice events are to be fetched manually.
-// <0=> NRF_SDH_DISPATCH_MODEL_INTERRUPT 
-// <1=> NRF_SDH_DISPATCH_MODEL_APPSH 
-// <2=> NRF_SDH_DISPATCH_MODEL_POLLING 
-
-#ifndef NRF_SDH_DISPATCH_MODEL
-#define NRF_SDH_DISPATCH_MODEL 0
+#ifndef NRF_TWI_SENSOR_CONFIG_INFO_COLOR
+#define NRF_TWI_SENSOR_CONFIG_INFO_COLOR 0
 #endif
 
-// </h> 
-//==========================================================
-
-// <h> Clock - SoftDevice clock configuration
-
-//==========================================================
-// <o> NRF_SDH_CLOCK_LF_SRC  - SoftDevice clock source.
+// <o> NRF_TWI_SENSOR_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
  
-// <0=> NRF_CLOCK_LF_SRC_RC 
-// <1=> NRF_CLOCK_LF_SRC_XTAL 
-// <2=> NRF_CLOCK_LF_SRC_SYNTH 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
 
-#ifndef NRF_SDH_CLOCK_LF_SRC
-#define NRF_SDH_CLOCK_LF_SRC 1
+#ifndef NRF_TWI_SENSOR_CONFIG_DEBUG_COLOR
+#define NRF_TWI_SENSOR_CONFIG_DEBUG_COLOR 0
 #endif
-
-// <o> NRF_SDH_CLOCK_LF_RC_CTIV - SoftDevice calibration timer interval. 
-#ifndef NRF_SDH_CLOCK_LF_RC_CTIV
-#define NRF_SDH_CLOCK_LF_RC_CTIV 0
-#endif
-
-// <o> NRF_SDH_CLOCK_LF_RC_TEMP_CTIV - SoftDevice calibration timer interval under constant temperature. 
-// <i> How often (in number of calibration intervals) the RC oscillator shall be calibrated
-// <i>  if the temperature has not changed.
-
-#ifndef NRF_SDH_CLOCK_LF_RC_TEMP_CTIV
-#define NRF_SDH_CLOCK_LF_RC_TEMP_CTIV 0
-#endif
-
-// <o> NRF_SDH_CLOCK_LF_XTAL_ACCURACY  - External crystal clock accuracy used in the LL to compute timing windows.
- 
-// <0=> NRF_CLOCK_LF_XTAL_ACCURACY_250_PPM 
-// <1=> NRF_CLOCK_LF_XTAL_ACCURACY_500_PPM 
-// <2=> NRF_CLOCK_LF_XTAL_ACCURACY_150_PPM 
-// <3=> NRF_CLOCK_LF_XTAL_ACCURACY_100_PPM 
-// <4=> NRF_CLOCK_LF_XTAL_ACCURACY_75_PPM 
-// <5=> NRF_CLOCK_LF_XTAL_ACCURACY_50_PPM 
-// <6=> NRF_CLOCK_LF_XTAL_ACCURACY_30_PPM 
-// <7=> NRF_CLOCK_LF_XTAL_ACCURACY_20_PPM 
-
-#ifndef NRF_SDH_CLOCK_LF_XTAL_ACCURACY
-#define NRF_SDH_CLOCK_LF_XTAL_ACCURACY 7
-#endif
-
-// </h> 
-//==========================================================
-
-// <h> SDH Observers - Observers and priority levels
-
-//==========================================================
-// <o> NRF_SDH_REQ_OBSERVER_PRIO_LEVELS - Total number of priority levels for request observers. 
-// <i> This setting configures the number of priority levels available for the SoftDevice request event handlers.
-// <i> The priority level of a handler determines the order in which it receives events, with respect to other handlers.
-
-#ifndef NRF_SDH_REQ_OBSERVER_PRIO_LEVELS
-#define NRF_SDH_REQ_OBSERVER_PRIO_LEVELS 2
-#endif
-
-// <o> NRF_SDH_STATE_OBSERVER_PRIO_LEVELS - Total number of priority levels for state observers. 
-// <i> This setting configures the number of priority levels available for the SoftDevice state event handlers.
-// <i> The priority level of a handler determines the order in which it receives events, with respect to other handlers.
-
-#ifndef NRF_SDH_STATE_OBSERVER_PRIO_LEVELS
-#define NRF_SDH_STATE_OBSERVER_PRIO_LEVELS 2
-#endif
-
-// <o> NRF_SDH_STACK_OBSERVER_PRIO_LEVELS - Total number of priority levels for stack event observers. 
-// <i> This setting configures the number of priority levels available for the SoftDevice stack event handlers (ANT, BLE, SoC).
-// <i> The priority level of a handler determines the order in which it receives events, with respect to other handlers.
-
-#ifndef NRF_SDH_STACK_OBSERVER_PRIO_LEVELS
-#define NRF_SDH_STACK_OBSERVER_PRIO_LEVELS 2
-#endif
-
-
-// <h> State Observers priorities - Invididual priorities
-
-//==========================================================
-// <o> CLOCK_CONFIG_STATE_OBSERVER_PRIO  
-// <i> Priority with which state events are dispatched to the Clock driver.
-
-#ifndef CLOCK_CONFIG_STATE_OBSERVER_PRIO
-#define CLOCK_CONFIG_STATE_OBSERVER_PRIO 0
-#endif
-
-// <o> POWER_CONFIG_STATE_OBSERVER_PRIO  
-// <i> Priority with which state events are dispatched to the Power driver.
-
-#ifndef POWER_CONFIG_STATE_OBSERVER_PRIO
-#define POWER_CONFIG_STATE_OBSERVER_PRIO 0
-#endif
-
-// <o> RNG_CONFIG_STATE_OBSERVER_PRIO  
-// <i> Priority with which state events are dispatched to this module.
-
-#ifndef RNG_CONFIG_STATE_OBSERVER_PRIO
-#define RNG_CONFIG_STATE_OBSERVER_PRIO 0
-#endif
-
-// </h> 
-//==========================================================
-
-// <h> Stack Event Observers priorities - Invididual priorities
-
-//==========================================================
-// <o> NRF_SDH_ANT_STACK_OBSERVER_PRIO  
-// <i> This setting configures the priority with which ANT events are processed with respect to other events coming from the stack.
-// <i> Modify this setting if you need to have ANT events dispatched before or after other stack events, such as BLE or SoC.
-// <i> Zero is the highest priority.
-
-#ifndef NRF_SDH_ANT_STACK_OBSERVER_PRIO
-#define NRF_SDH_ANT_STACK_OBSERVER_PRIO 0
-#endif
-
-// <o> NRF_SDH_BLE_STACK_OBSERVER_PRIO  
-// <i> This setting configures the priority with which BLE events are processed with respect to other events coming from the stack.
-// <i> Modify this setting if you need to have BLE events dispatched before or after other stack events, such as ANT or SoC.
-// <i> Zero is the highest priority.
-
-#ifndef NRF_SDH_BLE_STACK_OBSERVER_PRIO
-#define NRF_SDH_BLE_STACK_OBSERVER_PRIO 0
-#endif
-
-// <o> NRF_SDH_SOC_STACK_OBSERVER_PRIO  
-// <i> This setting configures the priority with which SoC events are processed with respect to other events coming from the stack.
-// <i> Modify this setting if you need to have SoC events dispatched before or after other stack events, such as ANT or BLE.
-// <i> Zero is the highest priority.
-
-#ifndef NRF_SDH_SOC_STACK_OBSERVER_PRIO
-#define NRF_SDH_SOC_STACK_OBSERVER_PRIO 0
-#endif
-
-// </h> 
-//==========================================================
-
-// </h> 
-//==========================================================
-
 
 // </e>
 
-// <e> NRF_SDH_SOC_ENABLED - nrf_sdh_soc - SoftDevice SoC event handler
-//==========================================================
-#ifndef NRF_SDH_SOC_ENABLED
-#define NRF_SDH_SOC_ENABLED 1
-#endif
-// <h> SoC Observers - Observers and priority levels
-
-//==========================================================
-// <o> NRF_SDH_SOC_OBSERVER_PRIO_LEVELS - Total number of priority levels for SoC observers. 
-// <i> This setting configures the number of priority levels available for the SoC event handlers.
-// <i> The priority level of a handler determines the order in which it receives events, with respect to other handlers.
-
-#ifndef NRF_SDH_SOC_OBSERVER_PRIO_LEVELS
-#define NRF_SDH_SOC_OBSERVER_PRIO_LEVELS 2
-#endif
-
-// <h> SoC Observers priorities - Invididual priorities
-
-//==========================================================
-// <o> BLE_ADV_SOC_OBSERVER_PRIO  
-// <i> Priority with which SoC events are dispatched to the Advertising module.
-
-#ifndef BLE_ADV_SOC_OBSERVER_PRIO
-#define BLE_ADV_SOC_OBSERVER_PRIO 1
-#endif
-
-// <o> BLE_DFU_SOC_OBSERVER_PRIO  
-// <i> Priority with which BLE events are dispatched to the DFU Service.
-
-#ifndef BLE_DFU_SOC_OBSERVER_PRIO
-#define BLE_DFU_SOC_OBSERVER_PRIO 1
-#endif
-
-// <o> CLOCK_CONFIG_SOC_OBSERVER_PRIO  
-// <i> Priority with which SoC events are dispatched to the Clock driver.
-
-#ifndef CLOCK_CONFIG_SOC_OBSERVER_PRIO
-#define CLOCK_CONFIG_SOC_OBSERVER_PRIO 0
-#endif
-
-// <o> POWER_CONFIG_SOC_OBSERVER_PRIO  
-// <i> Priority with which SoC events are dispatched to the Power driver.
-
-#ifndef POWER_CONFIG_SOC_OBSERVER_PRIO
-#define POWER_CONFIG_SOC_OBSERVER_PRIO 0
-#endif
-
 // </h> 
 //==========================================================
 
-// </h> 
-//==========================================================
+// <h> nrf_log in nRF_Serialization 
 
+//==========================================================
+// <e> SER_HAL_TRANSPORT_CONFIG_LOG_ENABLED - Enables logging in the module.
+//==========================================================
+#ifndef SER_HAL_TRANSPORT_CONFIG_LOG_ENABLED
+#define SER_HAL_TRANSPORT_CONFIG_LOG_ENABLED 0
+#endif
+// <o> SER_HAL_TRANSPORT_CONFIG_LOG_LEVEL  - Default Severity level
+ 
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef SER_HAL_TRANSPORT_CONFIG_LOG_LEVEL
+#define SER_HAL_TRANSPORT_CONFIG_LOG_LEVEL 3
+#endif
+
+// <o> SER_HAL_TRANSPORT_CONFIG_INFO_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef SER_HAL_TRANSPORT_CONFIG_INFO_COLOR
+#define SER_HAL_TRANSPORT_CONFIG_INFO_COLOR 0
+#endif
+
+// <o> SER_HAL_TRANSPORT_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef SER_HAL_TRANSPORT_CONFIG_DEBUG_COLOR
+#define SER_HAL_TRANSPORT_CONFIG_DEBUG_COLOR 0
+#endif
 
 // </e>
+
+// </h> 
+//==========================================================
+
+// </h> 
+//==========================================================
+
+// </h> 
+//==========================================================
+
+// </h> 
+//==========================================================
+
+// <h> nRF_USB_DFU 
+
+//==========================================================
+// <o> NRF_DFU_SERIAL_USB_RX_BUFFERS - nrf_dfu_serial_usb - USB DFU transport 
+// <i> Number of buffers depends on flash access vs.
+// <i> transport throughtput. If value is too low it may lead
+// <i> to received packets being dropped.
+
+#ifndef NRF_DFU_SERIAL_USB_RX_BUFFERS
+#define NRF_DFU_SERIAL_USB_RX_BUFFERS 3
+#endif
 
 // </h> 
 //==========================================================

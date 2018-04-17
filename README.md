@@ -6,6 +6,8 @@ UF2 bootloader for nRF52840
 
 Download [nRF5 SDK v14.2.0](https://developer.nordicsemi.com/nRF5_SDK/nRF5_SDK_v14.x.x/nRF5_SDK_14.2.0_17b948a.zip)
 
+https://developer.nordicsemi.com/nRF5_SDK/nRF5_SDK_v15.x.x/nRF5_SDK_15.0.0_a53641a.zip
+
 Rename `nRF5_SDK_14.2.0_17b948a` to `nRF5_SDK`. You should have `nRF5_SDK/components` in this directory.
 
 Run `make`
