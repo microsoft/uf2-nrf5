@@ -78,11 +78,17 @@ static const struct TextFile info[] = {
     {.name = "INDEX   HTM", .content = indexFile},
     {.name = "CURRENT UF2"},
 };
-#define NUM_INFO (sizeof(info) / sizeof(info[0]))
+// WARNING -- code presumes each non-UF2 file content fits in single sector
+//            Cannot programmatically statically assert .content length
+//            for each element above.
+STATIC_ASSERT(ARRAY_SIZE(infoUf2File) < 512);
+STATIC_ASSERT(ARRAY_SIZE(indexFile) < 512);
+#define NUM_FILES (ARRAY_SIZE(info))
+#define NUM_DIRENTRIES (NUM_FILES + 1) // Code adds volume label as first root directory entry
 
 #define UF2_SIZE (FLASH_SIZE * 2)
 #define UF2_SECTORS (UF2_SIZE / 512)
-#define UF2_FIRST_SECTOR (NUM_INFO + 1)
+#define UF2_FIRST_SECTOR (NUM_FILES + 1) // WARNING -- code presumes each non-UF2 file content fits in a single sector
 #define UF2_LAST_SECTOR (UF2_FIRST_SECTOR + UF2_SECTORS - 1)
 
 #define RESERVED_SECTORS 1
@@ -94,6 +100,11 @@ static const struct TextFile info[] = {
 #define START_ROOTDIR (START_FAT1 + SECTORS_PER_FAT)
 #define START_CLUSTERS (START_ROOTDIR + ROOT_DIR_SECTORS)
 
+// all directory entries must fit in a single sector
+// because otherwise current code overflows buffer
+#define DIRENTRIES_PER_SECTOR (512/sizeof(DirEntry))
+STATIC_ASSERT(NUM_DIRENTRIES < DIRENTRIES_PER_SECTOR );
+
 static const FAT_BootBlock BootBlock = {
     .JumpInstruction = {0xeb, 0x3c, 0x90},
     .OEMInfo = "UF2 UF2 ",
@@ -101,12 +112,13 @@ static const FAT_BootBlock BootBlock = {
     .SectorsPerCluster = 1,
     .ReservedSectors = RESERVED_SECTORS,
     .FATCopies = 2,
-    .RootDirectoryEntries = (ROOT_DIR_SECTORS * 512 / 32),
+    .RootDirectoryEntries = (ROOT_DIR_SECTORS * 512 / DIRENTRIES_PER_SECTOR),
     .TotalSectors16 = NUM_FAT_BLOCKS - 2,
     .MediaDescriptor = 0xF8,
     .SectorsPerFAT = SECTORS_PER_FAT,
     .SectorsPerTrack = 1,
     .Heads = 1,
+    .PhysicalDriveNum = 0x80, // to match MediaDescriptor of 0xF8
     .ExtendedBootSig = 0x29,
     .VolumeSerialNumber = 0x00420042,
     .VolumeLabel = VOLUME_LABEL,
@@ -201,47 +213,56 @@ void read_block(uint32_t block_no, uint8_t *data) {
     memset(data, 0, 512);
     uint32_t sectionIdx = block_no;
 
-    if (block_no == 0) {
+    if (block_no == 0) { // Requested boot block
         memcpy(data, &BootBlock, sizeof(BootBlock));
         data[510] = 0x55;
         data[511] = 0xaa;
         // logval("data[0]", data[0]);
-    } else if (block_no < START_ROOTDIR) {
+    } else if (block_no < START_ROOTDIR) { // Requested a FAT table sector
         sectionIdx -= START_FAT0;
         // logval("sidx", sectionIdx);
         if (sectionIdx >= SECTORS_PER_FAT)
-            sectionIdx -= SECTORS_PER_FAT;
-        if (sectionIdx == 0) {
+            sectionIdx -= SECTORS_PER_FAT; // Two copies of FATs, both are identical
+        if (sectionIdx == 0) { // generate the FAT chains for single-sector files
             data[0] = 0xf0;
             for (int i = 1; i < NUM_INFO * 2 + 4; ++i) {
+                // WARNING -- code presumes only one NULL .content for the .UF2 file
+                //            and all non-NULL .content fit in one sector
+                //            and requires the .UF2 file to be the last element of the array
                 data[i] = 0xff;
             }
         }
-        for (int i = 0; i < 256; ++i) {
+        for (int i = 0; i < 256; ++i) { // generate the FAT chain for the .UF2 file
             uint32_t v = sectionIdx * 256 + i;
             if (UF2_FIRST_SECTOR <= v && v <= UF2_LAST_SECTOR)
                 ((uint16_t *)(void *)data)[i] = v == UF2_LAST_SECTOR ? 0xffff : v + 1;
         }
-    } else if (block_no < START_CLUSTERS) {
+    } else if (block_no < START_CLUSTERS) { // Requested one of the root directory sectors
         sectionIdx -= START_ROOTDIR;
-        if (sectionIdx == 0) {
+        if (sectionIdx == 0) { // STATIC_ASSERT() above ensures only one sector has directory entries
             DirEntry *d = (void *)data;
             padded_memcpy(d->name, (const char *)BootBlock.VolumeLabel, 11);
             d->attrs = 0x28;
             for (int i = 0; i < NUM_INFO; ++i) {
                 d++;
                 const struct TextFile *inf = &info[i];
+                // WARNING -- code presumes only one NULL .content for .UF2 file
+                //            and requires it be the last element of the array
                 d->size = inf->content ? strlen(inf->content) : UF2_SIZE;
                 d->startCluster = i + 2;
                 padded_memcpy(d->name, inf->name, 11);
+                // FAT specification REQUIRES the creation date
+                // (if this is not filled in, cannot list files in CMD / DOS)
+                d->updateDate = 0x4d99; // valid date
             }
         }
-    } else {
+    } else { // Requested a sector that could contain user data (files, UF2)
         sectionIdx -= START_CLUSTERS;
-        if (sectionIdx < NUM_INFO - 1) {
+        // WARNING -- code presumes each file (except last) fits in a single sector
+        if (sectionIdx < NUM_FILES - 1) {
             memcpy(data, info[sectionIdx].content, strlen(info[sectionIdx].content));
         } else {
-            sectionIdx -= NUM_INFO - 1;
+            sectionIdx -= NUM_FILES - 1;
             uint32_t addr = sectionIdx * 256;
             if (addr < FLASH_SIZE) {
                 UF2_Block *bl = (void *)data;
@@ -266,6 +287,11 @@ void write_block(uint32_t block_no, uint8_t *data, bool quiet, WriteState *state
     if (!is_uf2_block(bl)) {
         return;
     }
+    // TODO -- Check if should ignore block with different family ID specified
+    // if ( UF2_FAMILY_ID && !((bl->flags & UF2_FLAG_FAMILYID) && (bl->familyID == UF2_FAMILY_ID)) ) {
+    //  return -1;
+    //}
+    
 
     if ((bl->flags & UF2_FLAG_NOFLASH) || bl->payloadSize > 256 || (bl->targetAddr & 0xff) ||
         bl->targetAddr < USER_FLASH_START || bl->targetAddr + bl->payloadSize > USER_FLASH_END) {
