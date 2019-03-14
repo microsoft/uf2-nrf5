@@ -8,6 +8,10 @@
 
 #include <string.h>
 
+#ifndef ARRAY_SIZE
+#define ARRAY_SIZE(arr) sizeof(arr) / sizeof(arr[0])
+#endif
+
 typedef struct {
     uint8_t JumpInstruction[3];
     uint8_t OEMInfo[8];
@@ -253,6 +257,7 @@ void read_block(uint32_t block_no, uint8_t *data) {
                 padded_memcpy(d->name, inf->name, 11);
                 // FAT specification REQUIRES the creation date
                 // (if this is not filled in, cannot list files in CMD / DOS)
+                d->createDate = 0x4d99; // valid date
                 d->updateDate = 0x4d99; // valid date
             }
         }
@@ -291,7 +296,6 @@ void write_block(uint32_t block_no, uint8_t *data, bool quiet, WriteState *state
     // if ( UF2_FAMILY_ID && !((bl->flags & UF2_FLAG_FAMILYID) && (bl->familyID == UF2_FAMILY_ID)) ) {
     //  return -1;
     //}
-    
 
     if ((bl->flags & UF2_FLAG_NOFLASH) || bl->payloadSize > 256 || (bl->targetAddr & 0xff) ||
         bl->targetAddr < USER_FLASH_START || bl->targetAddr + bl->payloadSize > USER_FLASH_END) {
