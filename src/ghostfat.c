@@ -229,7 +229,7 @@ void read_block(uint32_t block_no, uint8_t *data) {
             sectionIdx -= SECTORS_PER_FAT; // Two copies of FATs, both are identical
         if (sectionIdx == 0) { // generate the FAT chains for single-sector files
             data[0] = 0xf0;
-            for (int i = 1; i < NUM_INFO * 2 + 4; ++i) {
+            for (int i = 1; i < NUM_FILES * 2 + 4; ++i) {
                 // WARNING -- code presumes only one NULL .content for the .UF2 file
                 //            and all non-NULL .content fit in one sector
                 //            and requires the .UF2 file to be the last element of the array
@@ -247,7 +247,7 @@ void read_block(uint32_t block_no, uint8_t *data) {
             DirEntry *d = (void *)data;
             padded_memcpy(d->name, (const char *)BootBlock.VolumeLabel, 11);
             d->attrs = 0x28;
-            for (int i = 0; i < NUM_INFO; ++i) {
+            for (int i = 0; i < NUM_FILES; ++i) {
                 d++;
                 const struct TextFile *inf = &info[i];
                 // WARNING -- code presumes only one NULL .content for .UF2 file
