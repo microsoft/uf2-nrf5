@@ -2,6 +2,8 @@
 
 UF2 bootloader for nRF52840
 
+**Warning**: This project was never fully functional. Please use https://github.com/adafruit/Adafruit_nRF52_Bootloader
+
 ## Build instructions
 
 Download [nRF5 SDK v14.2.0](https://developer.nordicsemi.com/nRF5_SDK/nRF5_SDK_v14.x.x/nRF5_SDK_14.2.0_17b948a.zip)
